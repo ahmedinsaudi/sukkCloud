@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"net"
 	"net/http"
+	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/a-h/templ"
+	"golang.org/x/time/rate"
 )
 
 // --- MOCK DATA STRUCTURES ---
@@ -83,7 +87,6 @@ func init() {
 		
 	}
 
-
 	postsDB["3"] = []Post{
 	
 		{"p11", "هل النجاح يعتمد على الحظ أم الجهد", "أرى أن التوازن بينهما هو العامل الحقيقي للنتائج"},
@@ -125,8 +128,88 @@ func getWords() []CloudWord {
 	}
 	return cloud
 }
+
+
+var (
+	visitors = make(map[string]*rate.Limiter)
+	mu       sync.Mutex
+)
+
+func getVisitor(ip string) *rate.Limiter {
+	mu.Lock()
+	defer mu.Unlock()
+	limiter, exists := visitors[ip]
+	if !exists {
+		// Allow 5 requests per second, with a burst of 10
+		limiter = rate.NewLimiter(5, 10)
+		visitors[ip] = limiter
+	}
+	return limiter
+}
+
+func RateLimitMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ip, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			ip = r.RemoteAddr
+		}
+
+		limiter := getVisitor(ip)
+		if !limiter.Allow() {
+			http.Error(w, "Too Many Requests", http.StatusTooManyRequests)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+// ==========================================
+// 2. SECURITY HEADERS MIDDLEWARE
+// ==========================================
+func SecurityMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Prevent Clickjacking
+		w.Header().Set("X-Frame-Options", "DENY")
+		// Prevent MIME-sniffing
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		// XSS Protection
+		w.Header().Set("X-XSS-Protection", "1; mode=block")
+		// Strict Transport Security (Force HTTPS)
+		w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+		
+		next.ServeHTTP(w, r)
+	})
+}
+
+
+func AnalyticsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+
+		// Call the next handler (process the request)
+		next.ServeHTTP(w, r)
+
+		duration := time.Since(startTime)
+		ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+		
+		// Here you calculate enters and behavior. 
+		// In production, save this to a Database (Postgres) or Redis instead of printing.
+		log.Printf("[STAT] IP: %s | Method: %s | Path: %s | Duration: %v | User-Agent: %s\n", 
+			ip, r.Method, r.URL.Path, duration, r.UserAgent())
+	})
+}
+
+
 func main() {
-	mux := http.ServeMux{}
+
+	port := os.Getenv("PORT")
+if port == "" {
+	port = "8080"
+}
+
+
+
+	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		templ.Handler(HomePage(getWords())).ServeHTTP(w, r)
@@ -174,8 +257,20 @@ func main() {
 		templ.Handler(CommentsSection(displayed, page, hasMore, 450)).ServeHTTP(w, r)
 	})
 
+
+	handler := AnalyticsMiddleware(SecurityMiddleware(RateLimitMiddleware(mux)))
+
+	// Security: Use a custom server struct to enforce timeouts (Prevents Slowloris DDoS attacks)
+	srv := &http.Server{
+		Addr:    "0.0.0.0:" + port,
+		Handler:      handler,
+		ReadTimeout:  5 * time.Second,  // Max time to read request
+		WriteTimeout: 10 * time.Second, // Max time to write response
+		IdleTimeout:  15 * time.Second, // Max time to keep connection alive
+	}
+
 	fmt.Println("Smart Base Server running on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", &mux))
+	log.Fatal(srv.ListenAndServe())
 }
 
 
