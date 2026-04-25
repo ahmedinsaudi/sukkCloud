@@ -31,89 +31,137 @@ func HomePage(words []CloudWord) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data=\"appData()\" @new-notification.window=\"fetchNotifications()\" :dir=\"rtl ? 'rtl' : 'ltr'\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"><title>sukk.cloud</title><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script><script src=\"https://cdn.tailwindcss.com\"></script><style>\r\n\t\t\t[x-cloak] { display: none !important; }\r\n\t\t\t@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Tajawal:wght@300;400;500;700;900&display=swap');\r\n\t\t\tbody { font-family: 'Inter', sans-serif; background-color: #f4f7f9; -webkit-tap-highlight-color: transparent; }\r\n\t\t\thtml[dir=\"rtl\"] body { font-family: 'Tajawal', sans-serif; }\r\n\t\t\t.glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.9); }\r\n\t\t\t.hide-scroll::-webkit-scrollbar { display: none; }\r\n\t\t\t.word-touch { cursor: pointer; transition: all 0.2s; padding: 2px 4px; border-radius: 6px; }\r\n\t\t\t.word-touch:hover { background-color: #e0e7ff; color: #4f46e5; font-weight: bold; }\r\n\t\t\t.word-selected { background-color: #4f46e5; color: white; font-weight: bold; }\r\n\t\t\t@keyframes cloudRing { 0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.6); } 70% { box-shadow: 0 0 0 12px rgba(99,102,241,0); } 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); } }\r\n\t\t\t.animate-cloud-ring { animation: cloudRing 2s infinite; border-radius: 50%; }\r\n\t\t</style><script>\r\n\t\t\t// Helper to fix the \"stale content\" bug before HTMX loads new data\r\n\t\t\tfunction showLoader(id) {\r\n\t\t\t\tdocument.getElementById(id).innerHTML = `<div class=\"flex flex-col items-center justify-center py-20\"><div class=\"w-10 h-10 border-4 border-indigo-100 border-t-indigo-500 rounded-full animate-spin\"></div></div>`;\r\n\t\t\t}\r\n\r\n\t\t\tfunction appData() {\r\n\t\t\t\treturn {\r\n\t\t\t\t\trtl: true,\r\n\t\t\t\t\tdrawerOpen: false,\r\n\t\t\t\t\tpostModalOpen: false, \r\n\t\t\t\t\tinsightOpen: false,\r\n\t\t\t\t\tsavedPostsOpen: false,\r\n\t\t\t\t\tnotificationsOpen: false, \r\n\t\t\t\t\tshareModalOpen: false,\r\n\t\t\t\t\thasNewNotifications: false,\r\n\t\t\t\t\t\r\n\t\t\t\t\tdraftOpen: false,\r\n\t\t\t\t\tpostText: '',\r\n\t\t\t\t\tsourceMode: false,\r\n\t\t\t\t\tinteractiveWords: [],\r\n\t\t\t\t\tselectedSources: [],\r\n\t\t\t\t\tactiveSourceId: null,\r\n\t\t\t\t\tnotifyFollowers: true,\r\n\t\t\t\t\twordCounter: 0,\r\n\t\t\t\t\tbranchContext: '', // Stores post title if branching\r\n\t\t\t\t\tselectedResonance: null, \r\n\t\t\t\t\tviewMode: 'posts',\r\n\t\t\t\t\tshareLink: 'https://sukk.cloud/u/thinker_origin',\r\n\t\t\t\t\t\r\n\t\t\t\t\tinit() { setTimeout(() => { if(!this.postModalOpen) this.insightOpen = true; }, 3500); },\r\n\t\t\t\t\t\r\n\t\t\t\t\t// Smart Post Publishing Logic\r\n\t\t\t\t\tenableSourceMode() {\r\n\t\t\t\t\t\tif(this.postText.trim() === '') return;\r\n\t\t\t\t\t\tthis.interactiveWords = this.postText.split(/\\s+/).map(w => ({ id: this.wordCounter++, text: w }));\r\n\t\t\t\t\t\tthis.sourceMode = true;\r\n\t\t\t\t\t},\r\n\t\t\t\t\ttouchWord(wordObj) {\r\n\t\t\t\t\t\tif (!this.selectedSources.find(s => s.id === wordObj.id)) {\r\n\t\t\t\t\t\t\tthis.selectedSources.push({ id: wordObj.id, word: wordObj.text, sourceTitle: null });\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t},\r\n\t\t\t\t\topenSourcePicker(id) {\r\n\t\t\t\t\t\tthis.activeSourceId = id;\r\n\t\t\t\t\t\tthis.savedPostsOpen = true; \r\n\t\t\t\t\t\thtmx.ajax('GET', '/api/saved', {target: '#saved-posts-content', swap: 'innerHTML'});\r\n\t\t\t\t\t},\r\n\t\t\t\t\tassignSource(title) {\r\n\t\t\t\t\t\tlet source = this.selectedSources.find(s => s.id === this.activeSourceId);\r\n\t\t\t\t\t\tif (source) source.sourceTitle = title;\r\n\t\t\t\t\t\tthis.savedPostsOpen = false;\r\n\t\t\t\t\t},\r\n\t\t\t\t\tcloseDraft() {\r\n\t\t\t\t\t\tthis.draftOpen = false; this.sourceMode = false; this.postText = ''; this.selectedSources = []; this.branchContext = '';\r\n\t\t\t\t\t},\r\n\t\t\t\t\tbranchThought(postTitle) {\r\n\t\t\t\t\t\tthis.postModalOpen = false;\r\n\t\t\t\t\t\tthis.branchContext = postTitle;\r\n\t\t\t\t\t\tthis.draftOpen = true;\r\n\t\t\t\t\t},\r\n\t\t\t\t\tasync publishPost() {\r\n\t\t\t\t\t\tif(this.postText.trim() === '') return;\r\n\t\t\t\t\t\tconst fd = new FormData();\r\n\t\t\t\t\t\tfd.append(\"text\", this.postText);\r\n\t\t\t\t\t\tfd.append(\"notify\", this.notifyFollowers ? \"on\" : \"off\");\r\n\t\t\t\t\t\tfd.append(\"branchFrom\", this.branchContext);\r\n\t\t\t\t\t\tconst validSources = this.selectedSources.filter(s => s.sourceTitle !== null);\r\n\t\t\t\t\t\tfd.append(\"sources\", JSON.stringify(validSources));\r\n\r\n\t\t\t\t\t\tawait fetch('/api/publish', { method: 'POST', body: fd });\r\n\t\t\t\t\t\tthis.closeDraft();\r\n\t\t\t\t\t\talert(this.rtl ? \"تم نشر فكرتك بنجاح!\" : \"Your truth has been added to the cosmos.\");\r\n\t\t\t\t\t},\r\n\r\n\t\t\t\t\t// Real Sharing\r\n\t\t\t\t\tasync copyLink() {\r\n\t\t\t\t\t\ttry { await navigator.clipboard.writeText(this.shareLink); alert(this.rtl ? \"تم نسخ الرابط!\" : \"Link copied!\"); } catch (e) { console.error(e); }\r\n\t\t\t\t\t},\r\n\t\t\t\t\topenWhatsApp() {\r\n\t\t\t\t\t\tconst msg = encodeURIComponent(`Uncover this truth: ${this.shareLink}`);\r\n\t\t\t\t\t\twindow.open(`https://wa.me/?text=${msg}`, \"_blank\");\r\n\t\t\t\t\t},\r\n\r\n\t\t\t\t\t// Fetch updated notifications quietly\r\n\t\t\t\t\tfetchNotifications() {\r\n\t\t\t\t\t\tthis.hasNewNotifications = true;\r\n\t\t\t\t\t\thtmx.ajax('GET', '/api/notifications', {target: '#notifications-content', swap: 'innerHTML'});\r\n\t\t\t\t\t},\r\n\r\n\t\t\t\t\ttoggleLang() { this.rtl = !this.rtl; }\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t</script></head><body class=\"bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] text-slate-800 h-screen overflow-hidden flex flex-col relative\"><!-- PREMIUM MOBILE BRANDING (Trusted & Native Feel) --><div class=\"fixed top-0 w-full flex justify-center z-50 pointer-events-none md:hidden\"><div class=\"bg-gradient-to-b from-white/95 to-white/60 backdrop-blur-md border-b border-x border-white/80 shadow-[0_4px_15px_rgba(0,0,0,0.03)] px-4 py-1 rounded-b-[1.2rem] flex items-center gap-1.5\"><!-- Spark/Trust Icon --><svg class=\"w-3 h-3 text-indigo-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.5\" d=\"M13 10V3L4 14h7v7l9-11h-7z\"></path></svg><!-- Brand Name --><span class=\"text-[10px] font-black tracking-[0.15em] text-slate-800 uppercase\">sukk<span class=\"text-indigo-500\">.cloud</span></span></div></div><!-- TOP NAV --><div class=\"fixed top-8 md:top-5 left-1/2 transform -translate-x-1/2 w-[96%] md:w-[90%] max-w-6xl glass rounded-full px-2 md:px-4 py-2 flex justify-between items-center z-40 shadow-sm transition-all\"><div class=\"flex items-center gap-1 md:gap-3 shrink-0 pe-2 md:pe-4\"><button @click=\"insightOpen = !insightOpen\" class=\"p-2 rounded-full hover:bg-slate-100 text-slate-600\"><svg class=\"w-5 h-5 md:w-6 md:h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button><h1 class=\"text-2xl font-black tracking-tighter text-slate-900 hidden sm:block\">sukk.cloud</h1></div><div class=\"flex-grow flex items-center bg-slate-100/50 rounded-full px-3 py-1.5 md:py-2 border border-slate-200\"><svg class=\"w-4 h-4 text-slate-400 mr-1 rtl:ml-1\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg> <input type=\"text\" :placeholder=\"rtl ? 'ابحث عن الحقيقة...' : 'Search for truth...'\" class=\"w-full bg-transparent border-none outline-none placeholder-slate-400 text-slate-800 text-sm md:text-base font-semibold\"></div><div class=\"shrink-0 border-s border-slate-300/60 ps-2 ms-2 md:ps-4 md:ms-3 flex items-center gap-1 md:gap-2\"><button @click=\"notificationsOpen = true; hasNewNotifications = false\" hx-get=\"/api/notifications\" hx-target=\"#notifications-content\" class=\"p-1.5 md:p-2 rounded-full transition relative text-slate-500 hover:text-slate-800\" :class=\"hasNewNotifications ? 'animate-cloud-ring text-indigo-600 bg-indigo-50' : ''\"><svg class=\"w-5 h-5 md:w-6 md:h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9\"></path></svg> <span x-show=\"hasNewNotifications\" class=\"absolute top-1 right-1 md:right-2 w-2 h-2 bg-red-500 rounded-full\" x-cloak></span></button> <button @click=\"savedPostsOpen = true\" hx-get=\"/api/saved\" hx-target=\"#saved-posts-content\" class=\"p-1.5 md:p-2 rounded-full hover:bg-slate-100 text-slate-500\"><svg class=\"w-5 h-5 md:w-6 md:h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z\"></path></svg></button> <button @click=\"toggleLang()\" class=\"px-2 md:px-4 py-1.5 md:py-2 rounded-full bg-slate-100/50 hover:bg-slate-200 font-black text-[10px] md:text-xs text-slate-600 uppercase\" x-text=\"rtl ? 'EN' : 'عربي'\"></button></div></div><!-- MAIN CANVAS WITH SHORT MERGE RECOMMENDER --><main id=\"cloud-canvas\" class=\"flex-grow flex p-4 sm:p-10 relative hide-scroll overflow-y-auto mt-20 md:mt-28 pb-32\"><div class=\"flex flex-wrap justify-center content-start gap-3 md:gap-4 max-w-6xl mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data=\"appData()\" @new-notification.window=\"fetchNotifications()\" :dir=\"rtl ? 'rtl' : 'ltr'\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"><title>sukk.cloud</title><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script><script src=\"https://cdn.tailwindcss.com\"></script><style>\r\n\t\t\t[x-cloak] { display: none !important; }\r\n\t\t\t@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Tajawal:wght@300;400;500;700;900&display=swap');\r\n\t\t\tbody { font-family: 'Inter', sans-serif; background-color: #f4f7f9; -webkit-tap-highlight-color: transparent; }\r\n\t\t\thtml[dir=\"rtl\"] body { font-family: 'Tajawal', sans-serif; }\r\n\t\t\t.glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.9); }\r\n\t\t\t.hide-scroll::-webkit-scrollbar { display: none; }\r\n\t\t\t.word-touch { cursor: pointer; transition: all 0.2s; padding: 2px 4px; border-radius: 6px; }\r\n\t\t\t.word-touch:hover { background-color: #e0e7ff; color: #4f46e5; font-weight: bold; }\r\n\t\t\t.word-selected { background-color: #4f46e5; color: white; font-weight: bold; }\r\n\t\t\t@keyframes cloudRing { 0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.6); } 70% { box-shadow: 0 0 0 12px rgba(99,102,241,0); } 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); } }\r\n\t\t\t.animate-cloud-ring { animation: cloudRing 2s infinite; border-radius: 50%; }\r\n\t\t</style><script>\r\n\t\t\t// Helper to fix the \"stale content\" bug before HTMX loads new data\r\n\t\t\tfunction showLoader(id) {\r\n\t\t\t\tdocument.getElementById(id).innerHTML = `<div class=\"flex flex-col items-center justify-center py-20\"><div class=\"w-10 h-10 border-4 border-indigo-100 border-t-indigo-500 rounded-full animate-spin\"></div></div>`;\r\n\t\t\t}\r\n\r\n\t\t\tfunction appData() {\r\n\t\t\t\treturn {\r\n\t\t\t\t\trtl: true,\r\n\t\t\t\t\tdrawerOpen: false,\r\n\t\t\t\t\tpostModalOpen: false, \r\n\t\t\t\t\tinsightOpen: false,\r\n\t\t\t\t\tsavedPostsOpen: false,\r\n\t\t\t\t\tnotificationsOpen: false, \r\n\t\t\t\t\tshareModalOpen: false,\r\n\t\t\t\t\thasNewNotifications: false,\r\n\t\t\t\t\t\r\n\t\t\t\t\tdraftOpen: false,\r\n\t\t\t\t\tpostText: '',\r\n\t\t\t\t\tsourceMode: false,\r\n\t\t\t\t\tinteractiveWords: [],\r\n\t\t\t\t\tselectedSources: [],\r\n\t\t\t\t\tactiveSourceId: null,\r\n\t\t\t\t\tnotifyFollowers: true,\r\n\t\t\t\t\twordCounter: 0,\r\n\t\t\t\t\tbranchContext: '', // Stores post title if branching\r\n\t\t\t\t\tselectedResonance: null, \r\n\t\t\t\t\tviewMode: 'posts',\r\n\t\t\t\t\tshareLink: 'https://sukk.cloud/u/thinker_origin',\r\n\t\t\t\t\t\r\n\t\t\t\t\tinit() { setTimeout(() => { if(!this.postModalOpen) this.insightOpen = true; }, 3500); },\r\n\t\t\t\t\t\r\n\t\t\t\t\t// Smart Post Publishing Logic\r\n\t\t\t\t\tenableSourceMode() {\r\n\t\t\t\t\t\tif(this.postText.trim() === '') return;\r\n\t\t\t\t\t\tthis.interactiveWords = this.postText.split(/\\s+/).map(w => ({ id: this.wordCounter++, text: w }));\r\n\t\t\t\t\t\tthis.sourceMode = true;\r\n\t\t\t\t\t},\r\n\t\t\t\t\ttouchWord(wordObj) {\r\n\t\t\t\t\t\tif (!this.selectedSources.find(s => s.id === wordObj.id)) {\r\n\t\t\t\t\t\t\tthis.selectedSources.push({ id: wordObj.id, word: wordObj.text, sourceTitle: null });\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t},\r\n\t\t\t\t\topenSourcePicker(id) {\r\n\t\t\t\t\t\tthis.activeSourceId = id;\r\n\t\t\t\t\t\tthis.savedPostsOpen = true; \r\n\t\t\t\t\t\thtmx.ajax('GET', '/api/saved', {target: '#saved-posts-content', swap: 'innerHTML'});\r\n\t\t\t\t\t},\r\n\t\t\t\t\tassignSource(title) {\r\n\t\t\t\t\t\tlet source = this.selectedSources.find(s => s.id === this.activeSourceId);\r\n\t\t\t\t\t\tif (source) source.sourceTitle = title;\r\n\t\t\t\t\t\tthis.savedPostsOpen = false;\r\n\t\t\t\t\t},\r\n\t\t\t\t\tcloseDraft() {\r\n\t\t\t\t\t\tthis.draftOpen = false; this.sourceMode = false; this.postText = ''; this.selectedSources = []; this.branchContext = '';\r\n\t\t\t\t\t},\r\n\t\t\t\t\tbranchThought(postTitle) {\r\n\t\t\t\t\t\tthis.postModalOpen = false;\r\n\t\t\t\t\t\tthis.branchContext = postTitle;\r\n\t\t\t\t\t\tthis.draftOpen = true;\r\n\t\t\t\t\t},\r\n\t\t\t\t\tasync publishPost() {\r\n\t\t\t\t\t\tif(this.postText.trim() === '') return;\r\n\t\t\t\t\t\tconst fd = new FormData();\r\n\t\t\t\t\t\tfd.append(\"text\", this.postText);\r\n\t\t\t\t\t\tfd.append(\"notify\", this.notifyFollowers ? \"on\" : \"off\");\r\n\t\t\t\t\t\tfd.append(\"branchFrom\", this.branchContext);\r\n\t\t\t\t\t\tconst validSources = this.selectedSources.filter(s => s.sourceTitle !== null);\r\n\t\t\t\t\t\tfd.append(\"sources\", JSON.stringify(validSources));\r\n\r\n\t\t\t\t\t\tawait fetch('/api/publish', { method: 'POST', body: fd });\r\n\t\t\t\t\t\tthis.closeDraft();\r\n\t\t\t\t\t\talert(this.rtl ? \"تم نشر فكرتك بنجاح!\" : \"Your truth has been added to the cosmos.\");\r\n\t\t\t\t\t},\r\n\r\n\t\t\t\t\t// Real Sharing\r\n\t\t\t\t\tasync copyLink() {\r\n\t\t\t\t\t\ttry { await navigator.clipboard.writeText(this.shareLink); alert(this.rtl ? \"تم نسخ الرابط!\" : \"Link copied!\"); } catch (e) { console.error(e); }\r\n\t\t\t\t\t},\r\n\t\t\t\t\topenWhatsApp() {\r\n\t\t\t\t\t\tconst msg = encodeURIComponent(`Uncover this truth: ${this.shareLink}`);\r\n\t\t\t\t\t\twindow.open(`https://wa.me/?text=${msg}`, \"_blank\");\r\n\t\t\t\t\t},\r\n\r\n\t\t\t\t\t// Fetch updated notifications quietly\r\n\t\t\t\t\tfetchNotifications() {\r\n\t\t\t\t\t\tthis.hasNewNotifications = true;\r\n\t\t\t\t\t\thtmx.ajax('GET', '/api/notifications', {target: '#notifications-content', swap: 'innerHTML'});\r\n\t\t\t\t\t},\r\n\r\n\t\t\t\t\ttoggleLang() { this.rtl = !this.rtl; }\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t</script></head><body class=\"bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] text-slate-800 h-screen overflow-hidden flex flex-col relative\"><!-- PREMIUM MOBILE BRANDING (Trusted & Native Feel) --><div class=\"fixed top-0 w-full flex justify-center z-50 pointer-events-none md:hidden\"><div class=\"bg-gradient-to-b from-white/95 to-white/60 backdrop-blur-md border-b border-x border-white/80 shadow-[0_4px_15px_rgba(0,0,0,0.03)] px-4 py-1 rounded-b-[1.2rem] flex items-center gap-1.5\"><!-- Spark/Trust Icon --><svg class=\"w-3 h-3 text-indigo-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.5\" d=\"M13 10V3L4 14h7v7l9-11h-7z\"></path></svg><!-- Brand Name --><span class=\"text-[12px] font-black tracking-[0.15em] text-slate-800 uppercase\">sukk<span class=\"text-indigo-500\">.cloud</span></span></div></div><!-- TOP NAV --><div class=\"fixed top-8 md:top-5 left-1/2 transform -translate-x-1/2 w-[96%] md:w-[90%] max-w-6xl glass rounded-full px-2 md:px-4 py-2 flex justify-between items-center z-40 shadow-sm transition-all\"><div class=\"flex items-center gap-1 md:gap-3 shrink-0 pe-2 md:pe-4\"><button @click=\"insightOpen = !insightOpen\" class=\"p-2 rounded-full hover:bg-slate-100 text-slate-600\"><svg class=\"w-5 h-5 md:w-6 md:h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button><h1 class=\"text-2xl font-black tracking-tighter text-slate-900 hidden sm:block\">sukk.cloud</h1></div><div class=\"flex-grow flex items-center bg-slate-100/50 rounded-full px-3 py-1.5 md:py-2 border border-slate-200\"><svg class=\"w-4 h-4 text-slate-400 mr-1 rtl:ml-1\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg> <input type=\"text\" :placeholder=\"rtl ? 'ابحث عن الحقيقة...' : 'Search for truth...'\" class=\"w-full bg-transparent border-none outline-none placeholder-slate-400 text-slate-800 text-sm md:text-base font-semibold\"></div><div class=\"shrink-0 border-s border-slate-300/60 ps-2 ms-2 md:ps-4 md:ms-3 flex items-center gap-1 md:gap-2\"><button @click=\"notificationsOpen = true; hasNewNotifications = false\" hx-get=\"/api/notifications\" hx-target=\"#notifications-content\" class=\"p-1.5 md:p-2 rounded-full transition relative text-slate-500 hover:text-slate-800\" :class=\"hasNewNotifications ? 'animate-cloud-ring text-indigo-600 bg-indigo-50' : ''\"><svg class=\"w-5 h-5 md:w-6 md:h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9\"></path></svg> <span x-show=\"hasNewNotifications\" class=\"absolute top-1 right-1 md:right-2 w-2 h-2 bg-red-500 rounded-full\" x-cloak></span></button> <button @click=\"savedPostsOpen = true\" hx-get=\"/api/saved\" hx-target=\"#saved-posts-content\" class=\"p-1.5 md:p-2 rounded-full hover:bg-slate-100 text-slate-500\"><svg class=\"w-5 h-5 md:w-6 md:h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z\"></path></svg></button> <button @click=\"toggleLang()\" class=\"px-2 md:px-4 py-1.5 md:py-2 rounded-full bg-slate-100/50 hover:bg-slate-200 font-black text-[10px] md:text-xs text-slate-600 uppercase\" x-text=\"rtl ? 'EN' : 'عربي'\"></button></div></div><!-- MAIN CANVAS: هذا هو المحرك الرئيسي للصفحة --><main id=\"cloud-canvas\" class=\"flex-grow overflow-y-auto overflow-x-hidden hide-scroll pt-24 pb-40\"><!-- حاوية المحتوى: نستخدم flex-wrap لتوزيع العناصر --><div class=\"flex flex-wrap justify-center items-center gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-20 max-w-7xl mx-auto px-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for i, word := range words {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<!-- 3-4 WORD MERGE RECOMMENDER (Injected at index 8) --> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<!-- إدراج \"الصك\" في الترتيب الثامن ليكون قلب المجرة --> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if i == 8 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-2xl mx-auto my-6 relative group cursor-default\"><div class=\"absolute inset-0 bg-indigo-300/30 blur-2xl rounded-full group-hover:bg-indigo-400/40 transition duration-700\"></div><div class=\"relative bg-white/80 backdrop-blur-3xl border border-indigo-100 rounded-[2rem] p-5 md:p-6 flex flex-col md:flex-row items-center gap-4 shadow-sm hover:shadow-xl transition-all duration-500 text-center md:text-start rtl:md:text-right\"><div class=\"w-12 h-12 shrink-0 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500 border border-white\"><svg class=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 10V3L4 14h7v7l9-11h-7z\"></path></svg></div><div class=\"flex-grow\"><h3 class=\"text-sm md:text-base font-black text-slate-800 mb-1\" x-text=\"rtl ? 'ومضة إلهام' : 'Merge Concepts'\"></h3><p class=\"text-xs md:text-sm font-bold text-indigo-600 mb-3 bg-indigo-50 inline-block px-3 py-1 rounded-full border border-indigo-100\">الوعى <span class=\"text-slate-400\">+</span> الواقع</p></div><button hx-get=\"/api/topics?word=Quantum\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"text-xs md:text-sm font-black text-white bg-slate-900 px-5 py-2.5 rounded-full hover:bg-indigo-600 transition shadow-md w-full md:w-auto\"><span x-text=\"rtl ? 'استكشف التداخل' : 'Explore Nexus'\"></span></button></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-sm mx-auto my-8 relative group cursor-default z-20\"><!-- توهج خلفي (Aura) --><div class=\"absolute -inset-4 bg-indigo-500/15 blur-3xl rounded-[3rem] group-hover:bg-indigo-500/25 transition duration-700\"></div><!-- بطاقة الصك (The Sukk Card) --><div class=\"relative bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-700/50 rounded-[2.5rem] p-6 flex flex-col justify-between shadow-2xl overflow-hidden\" style=\"min-height: 320px; max-height: 40vh;\"><!-- علامة مائية خلفية --><div class=\"absolute -right-10 -top-10 text-white/5 transform rotate-12 pointer-events-none\"><svg class=\"w-40 h-40\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"></path></svg></div><!-- رأس الصك --><div class=\"flex items-center justify-between py-2 relative z-10\"><!-- Left: Identity --><div class=\"flex items-center gap-2\"><!-- Icon بدل العنوان الكبير --><div class=\"w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20\"><svg class=\"w-4 h-4 text-indigo-400\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path d=\"M9 12h6M9 16h6M7 4h10l2 2v14H5V4h2z\"></path></svg></div><!-- Text --><div class=\"leading-tight\"><p class=\"text-[10px] font-bold text-indigo-400 tracking-wide\" x-text=\"rtl ? 'صك معرفي' : 'Sukk'\"></p><p class=\"text-[9px] text-slate-500\" x-text=\"rtl ? 'نشط الآن' : 'Active'\"></p></div></div><!-- Right: Account --><div class=\"flex items-center gap-2\"><div class=\"text-right leading-tight\"><p class=\"text-[10px] text-white font-semibold\">Ahmed</p></div><img src=\"https://i.pravatar.cc/40\" class=\"w-7 h-7 rounded-full border border-slate-600\"></div></div><!-- الحالة الفكرية (مضغوطة) --><div class=\"text-center my-2 relative z-10\"><p class=\"text-[9px] text-slate-400 mb-0.5\" x-text=\"rtl ? 'الحالة' : 'State'\"></p><h2 class=\"text-sm font-bold text-white tracking-wide\" x-text=\"rtl ? 'التعمق الفلسفي' : 'Philosophical Depth'\"></h2></div><!-- الإحصائيات --><div class=\"flex justify-between text-[10px] md:text-xs text-slate-300 border-y border-white/10 py-3 mb-4 px-2 relative z-10\"><div class=\"flex flex-col items-center\"><span class=\"font-black text-white\">42</span><span class=\"opacity-50 text-[8px] uppercase tracking-tighter\" x-text=\"rtl ? 'كلمة' : 'Words'\"></span></div><div class=\"flex flex-col items-center\"><span class=\"font-black text-white\">128</span><span class=\"opacity-50 text-[8px] uppercase tracking-tighter\" x-text=\"rtl ? 'أثر' : 'Impact'\"></span></div><div class=\"flex flex-col items-center\"><span class=\"font-black text-indigo-400\">Lv 6</span><span class=\"opacity-50 text-[8px] uppercase tracking-tighter\" x-text=\"rtl ? 'العمق' : 'Depth'\"></span></div></div><!-- الترقية القادمة --><div class=\"text-center relative z-10\"><p class=\"text-[9px] text-slate-500 uppercase tracking-widest mb-2\" x-text=\"rtl ? 'مسار التطور القادم' : 'Next Path'\"></p><div class=\"flex justify-center gap-2\"><button hx-get=\"/api/topics?word=Logic\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"text-[10px] px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-indigo-600 rounded-full text-white font-bold transition-all active:scale-95\">Logic</button> <button hx-get=\"/api/topics?word=Ethics\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"text-[10px] px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-indigo-600 rounded-full text-white font-bold transition-all active:scale-95\">Ethics</button></div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " <!-- عرض الكلمات بتنسيق عشوائي منظم --> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var2 = []any{"relative rounded-full glass font-bold text-slate-700 hover:bg-white hover:text-indigo-600 hover:shadow-lg transition-all duration-300 shadow-sm border border-white/60", func() string {
-				if word.Size == 1 {
-					return "px-6 py-3 text-lg md:px-8 md:py-4 md:text-xl"
-				} else if word.Size == 2 {
-					return "px-5 py-2.5 text-base md:px-6 md:py-3 md:text-lg opacity-95"
-				} else {
-					return "px-4 py-2 text-xs md:px-5 md:py-2.5 md:text-sm opacity-85"
-				}
-			}()}
+			var templ_7745c5c3_Var2 = []any{"transition-all duration-1000 ",
+				func() string {
+					// الكلمات الـ 8 الأولى: مسافات رأسية صغيرة جداً لضغط المساحة
+					if i < 8 {
+						if i%2 == 0 {
+							return "mt-2 md:mt-4 px-2"
+						}
+						return "mt-0 px-2"
+					}
+					// باقي الكلمات: تعود للمسافات الواسعة لخلق عمق المجرة
+					if i%4 == 0 {
+						return "mt-16 md:mt-24 px-2"
+					}
+					if i%3 == 0 {
+						return "-mt-8 md:-mt-12 px-4"
+					}
+					if i%2 == 0 {
+						return "mt-4 md:mt-8 px-1"
+					}
+					return "mt-0"
+				}()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button hx-get=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("/api/topics?word=" + word.Text)
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var2).String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 196, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 1, Col: 0}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var2).String())
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 1, Col: 0}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			var templ_7745c5c3_Var4 = []any{"relative transition-all duration-500 group active:scale-90 ",
+				func() string {
+					base := " rounded-full backdrop-blur-md border tracking-tight font-black shadow-sm "
+					if word.Size == 1 {
+						return base + "px-7 py-3 md:px-10 md:py-5 text-lg md:text-2xl bg-white/90 border-indigo-200 text-slate-900 shadow-indigo-100/50"
+					}
+					if word.Size == 2 {
+						return base + "px-5 py-2.5 md:px-8 md:py-4 text-sm md:text-lg bg-white/70 border-white/60 text-slate-700"
+					}
+					return base + "px-4 py-2 text-xs md:text-sm bg-white/40 border-white/40 text-slate-500 opacity-80"
+				}()}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<button hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
-			}
-			if word.IsLive {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span class=\"absolute -top-1 -right-1 rtl:-left-1 rtl:-right-auto flex h-3 w-3\"><span class=\"animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75\"></span><span class=\"relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-white\"></span></span> ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(word.Text)
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/api/topics?word=" + word.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 201, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 277, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var4).String())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 1, Col: 0}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"><div class=\"absolute inset-0 rounded-full bg-indigo-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500\"></div><div class=\"relative flex items-center justify-center\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if word.IsLive {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<span class=\"relative flex h-3 w-3 mr-2 rtl:ml-2\"><span class=\"animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75\"></span> <span class=\"relative inline-flex rounded-full h-3 w-3 bg-indigo-600 shadow-[0_0_10px_rgba(79,70,229,0.5)]\"></span></span> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<span class=\"group-hover:text-indigo-700 transition-colors\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(word.Text)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 302, Col: 79}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span></div></button></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></main><!-- SMART POST MAKER --><div class=\"fixed bottom-2 md:bottom-[3%] left-1/2 transform -translate-x-1/2 w-[96%] sm:w-[90%] max-w-5xl z-[55] glass rounded-3xl md:rounded-[2.5rem] p-1.5 md:p-2 flex items-center shadow-xl border border-white/80 transition-all duration-500\" :class=\"draftOpen ? '!bg-white/95 !backdrop-blur-3xl !shadow-2xl !rounded-3xl md:!rounded-[3rem] !p-4 md:!p-8 !border-slate-200 !flex-col !items-stretch' : ''\"><div x-show=\"!draftOpen\" class=\"flex w-full items-center\"><div class=\"w-[60%] px-4 md:px-6 py-3 text-slate-500 font-bold text-xs md:text-base cursor-text truncate\" @click=\"draftOpen = true\" x-text=\"rtl ? 'شارك الحقيقة...' : 'Share a truth...'\"></div><div class=\"w-px h-8 bg-slate-300/60 mx-1 md:mx-2\"></div><button class=\"w-[40%] text-center text-indigo-700 font-black text-xs md:text-sm py-2 hover:bg-white/60 rounded-2xl transition truncate\" @click=\"shareModalOpen = true\" x-text=\"rtl ? 'كن مفكراً' : 'Become a Thinker'\"></button></div><div x-show=\"draftOpen\" x-cloak class=\"w-full flex flex-col gap-3 md:gap-4 relative\"><div class=\"flex justify-between items-center border-b border-slate-100 pb-3\"><div><h3 class=\"font-black text-lg md:text-xl text-slate-800\" x-text=\"rtl ? 'صياغة فكرة' : 'Drafting a thought'\"></h3><p x-show=\"branchContext\" class=\"text-[10px] text-indigo-600 font-bold bg-indigo-50 inline-block px-2 py-0.5 rounded-full mt-1\" x-text=\"'Branching from: ' + branchContext\"></p></div><button @click=\"closeDraft()\" class=\"text-slate-400 bg-slate-100 w-8 h-8 rounded-full font-bold\">&times;</button></div><div x-show=\"!sourceMode\"><textarea x-model=\"postText\" rows=\"3\" class=\"w-full bg-slate-50 rounded-2xl px-4 py-4 outline-none text-slate-800 text-base md:text-lg resize-none border border-slate-200 focus:border-indigo-400\"></textarea></div><div x-show=\"sourceMode\" class=\"bg-indigo-50 border border-indigo-100 rounded-xl p-4 md:p-6 min-h-[100px]\"><p class=\"text-[10px] text-indigo-500 uppercase font-black mb-3\">Touch words to attach a source</p><div class=\"text-base md:text-lg font-medium text-slate-800 leading-relaxed\"><template x-for=\"wordObj in interactiveWords\" :key=\"wordObj.id\"><span @click=\"touchWord(wordObj)\" x-text=\"wordObj.text\" class=\"word-touch\" :class=\"selectedSources.find(s => s.id === wordObj.id) ? 'word-selected' : ''\"></span></template></div></div><!-- Modern Linked Sources Display in Draft --><div x-show=\"selectedSources.length > 0\" class=\"mt-2 flex flex-wrap gap-2\"><template x-for=\"src in selectedSources\" :key=\"src.id\"><div class=\"flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm text-xs\"><span class=\"font-black text-indigo-600\" x-text=\"src.word\"></span> <button x-show=\"!src.sourceTitle\" @click=\"openSourcePicker(src.id)\" class=\"text-slate-400 hover:text-indigo-600\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\" d=\"M12 4v16m8-8H4\"></path></svg></button> <span x-show=\"src.sourceTitle\" class=\"flex items-center gap-1 font-bold text-slate-700\"><svg class=\"w-3 h-3 text-emerald-500\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\" d=\"M5 13l4 4L19 7\"></path></svg> <span x-text=\"src.sourceTitle\"></span></span></div></template></div><div class=\"flex flex-col md:flex-row justify-between items-center gap-4 mt-2 border-t border-slate-100 pt-3\"><div class=\"flex w-full md:w-auto items-center justify-between gap-4\"><button x-show=\"!sourceMode\" @click=\"enableSourceMode()\" class=\"text-indigo-600 bg-indigo-50 px-3 py-2 rounded-lg font-bold text-xs md:text-sm\">Link Sources</button> <button x-show=\"sourceMode\" @click=\"sourceMode = false\" class=\"text-slate-500 text-xs md:text-sm font-bold underline\">Back</button> <label class=\"flex items-center gap-2 cursor-pointer\"><input type=\"checkbox\" x-model=\"notifyFollowers\" class=\"sr-only\"><div class=\"w-8 h-5 rounded-full transition-colors\" :class=\"notifyFollowers ? 'bg-indigo-500' : 'bg-slate-300'\"><div class=\"bg-white w-3.5 h-3.5 rounded-full mt-0.5 ml-0.5 transition transform\" :class=\"notifyFollowers ? 'translate-x-3.5' : ''\"></div></div><span class=\"text-[10px] md:text-xs font-bold text-slate-500\">Notify</span></label></div><button @click=\"publishPost()\" class=\"w-full md:w-auto bg-slate-900 text-white px-6 py-3 rounded-xl font-black text-sm shadow-lg hover:bg-indigo-600 transition\">Publish</button></div></div></div><!-- CENTER MODAL CONVERTED TO A FULL SLIDE-UP PAGE --><div class=\"fixed inset-0 bg-[#f8fafc] z-[70] flex flex-col h-[100dvh] w-full\" x-show=\"postModalOpen\" x-transition:enter=\"transition-transform ease-out duration-500\" x-transition:enter-start=\"translate-y-full\" x-transition:enter-end=\"translate-y-0\" x-transition:leave=\"transition-transform ease-in duration-400\" x-transition:leave-start=\"translate-y-0\" x-transition:leave-end=\"translate-y-full\" x-cloak><div class=\"bg-white/90 backdrop-blur-xl border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center z-10 shrink-0 shadow-sm\"><div class=\"flex items-center gap-3\"><button @click=\"postModalOpen = false\" class=\"text-slate-500 hover:text-slate-900 bg-slate-100 rounded-full w-10 h-10 flex items-center justify-center font-bold transition\"><svg class=\"w-5 h-5 rtl:rotate-180\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\" d=\"M10 19l-7-7m0 0l7-7m-7 7h18\"></path></svg></button> <span class=\"font-black text-slate-800 text-base md:text-lg hidden sm:block\" x-text=\"rtl ? 'العودة' : 'Back'\"></span></div><h2 class=\"text-lg md:text-xl font-black text-slate-900 tracking-tighter\" x-text=\"rtl ? 'ساحة الأفكار' : 'Truth Chamber'\"></h2></div><div id=\"modal-content\" class=\"flex-grow flex flex-col relative h-full overflow-hidden\"><!-- طبقة المنشورات: تظهر فقط عندما يكون viewMode هو posts --><div id=\"posts-view\" class=\"h-full overflow-y-auto hide-scroll pb-20\" x-show=\"viewMode === 'posts'\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 scale-95\" x-transition:enter-end=\"opacity-100 scale-100\"><!-- HTMX سيضع المنشورات هنا مرة واحدة فقط ولن يتم مسحها --></div><!-- طبقة التعليقات: تظهر فقط عندما نضغط على Enter Echoes --><div id=\"comments-view\" class=\"h-full overflow-y-auto hide-scroll pb-20 bg-white\" x-show=\"viewMode === 'comments'\" x-transition:enter=\"transition ease-out duration-500 transform\" x-transition:enter-start=\"translate-x-full\" x-transition:enter-end=\"translate-x-0\" x-transition:leave=\"transition ease-in duration-300 transform\" x-transition:leave-start=\"translate-x-0\" x-transition:leave-end=\"translate-x-full\" x-cloak><!-- هنا سيتم شحن التعليقات --></div></div></div><!-- DRAWER (Side Menu) --><div class=\"fixed top-0 h-full w-full sm:w-[400px] bg-white/95 backdrop-blur-2xl z-[80] flex flex-col shadow-2xl\" :class=\"rtl ? 'left-0 border-e' : 'right-0 border-s'\" x-show=\"drawerOpen\" x-transition:enter=\"transition-transform ease-out duration-500\" x-transition:enter-start=\"translate-x-full rtl:-translate-x-full\" x-transition:enter-end=\"translate-x-0 rtl:-translate-x-0\" x-transition:leave=\"transition-transform ease-in duration-400\" x-transition:leave-start=\"translate-x-0 rtl:-translate-x-0\" x-transition:leave-end=\"translate-x-full rtl:-translate-x-full\" x-cloak><div class=\"p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50\"><h2 class=\"text-xl font-black text-slate-800\" x-text=\"rtl ? 'الاستكشاف' : 'Exploration'\"></h2><button @click=\"drawerOpen = false\" class=\"text-3xl text-slate-400 w-10 h-10 flex items-center justify-center\">&times;</button></div><div id=\"drawer-content\" class=\"p-6 overflow-y-auto flex-grow hide-scroll bg-white\"></div></div><!-- OVERLAYS (Share/Saved/Notifications) --><div class=\"fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity\" x-show=\"shareModalOpen\" x-cloak><div class=\"bg-white rounded-t-3xl sm:rounded-[2rem] shadow-2xl w-full max-w-sm p-6 md:p-8 relative\" @click.away=\"shareModalOpen = false\"><button @click=\"shareModalOpen = false\" class=\"absolute top-4 right-4 text-slate-400 text-2xl\">&times;</button><h3 class=\"text-xl md:text-2xl font-black mb-1 text-slate-800\" x-text=\"rtl ? 'شارك أفكارك' : 'Share your mind'\"></h3><p class=\"text-xs md:text-sm text-slate-500 mb-6\" x-text=\"rtl ? 'ادعُ الآخرين للنقاش' : 'Invite others to debate.'\"></p><div class=\"space-y-3\"><button @click=\"copyLink()\" class=\"w-full py-3 md:py-4 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-lg hover:bg-slate-800\">Copy Thinker Link</button> <button @click=\"openWhatsApp()\" class=\"w-full py-3 md:py-4 bg-green-50 text-green-700 rounded-xl font-bold text-sm border border-green-200\">WhatsApp Invite</button></div></div></div><div class=\"fixed inset-0 bg-slate-900/60 z-[100] flex items-end sm:items-center justify-center\" x-show=\"savedPostsOpen\" x-transition.opacity x-cloak><div class=\"bg-white w-full sm:max-w-md h-[80vh] sm:h-[600px] rounded-t-3xl sm:rounded-[2rem] flex flex-col\"><div class=\"p-5 border-b border-slate-100 flex justify-between\"><h3 class=\"font-black text-lg\">Saved Posts</h3><button @click=\"savedPostsOpen = false\" class=\"text-2xl\">&times;</button></div><div id=\"saved-posts-content\" class=\"p-5 overflow-y-auto\"></div></div></div><div class=\"fixed inset-0 bg-slate-900/60 z-[100] flex items-end sm:items-center justify-center\" x-show=\"notificationsOpen\" x-transition.opacity x-cloak><div class=\"bg-white w-full sm:max-w-md h-[80vh] sm:h-[600px] rounded-t-3xl sm:rounded-[2rem] flex flex-col\"><div class=\"p-5 border-b border-slate-100 flex justify-between\"><h3 class=\"font-black text-lg\">Notifications</h3><button @click=\"notificationsOpen = false\" class=\"text-2xl\">&times;</button></div><div id=\"notifications-content\" class=\"p-5 overflow-y-auto\"></div></div></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></main><!-- SMART POST MAKER --><div class=\"fixed bottom-2 md:bottom-[3%] left-1/2 transform -translate-x-1/2 w-[96%] sm:w-[90%] max-w-5xl z-[55] glass rounded-3xl md:rounded-[2.5rem] p-1.5 md:p-2 flex items-center shadow-xl border border-white/80 transition-all duration-500\" :class=\"draftOpen ? '!bg-white/95 !backdrop-blur-3xl !shadow-2xl !rounded-3xl md:!rounded-[3rem] !p-4 md:!p-8 !border-slate-200 !flex-col !items-stretch' : ''\"><div x-show=\"!draftOpen\" class=\"flex w-full items-center\"><div class=\"w-[60%] px-4 md:px-6 py-3 text-slate-500 font-bold text-xs md:text-base cursor-text truncate\" @click=\"draftOpen = true\" x-text=\"rtl ? 'شارك الحقيقة...' : 'Share a truth...'\"></div><div class=\"w-px h-8 bg-slate-300/60 mx-1 md:mx-2\"></div><button class=\"w-[40%] text-center text-indigo-700 font-black text-xs md:text-sm py-2 hover:bg-white/60 rounded-2xl transition truncate\" @click=\"shareModalOpen = true\" x-text=\"rtl ? 'كن مفكراً' : 'Become a Thinker'\"></button></div><div x-show=\"draftOpen\" x-cloak class=\"w-full flex flex-col gap-3 md:gap-4 relative\"><div class=\"flex justify-between items-center border-b border-slate-100 pb-3\"><div><h3 class=\"font-black text-lg md:text-xl text-slate-800\" x-text=\"rtl ? 'صياغة فكرة' : 'Drafting a thought'\"></h3><p x-show=\"branchContext\" class=\"text-[10px] text-indigo-600 font-bold bg-indigo-50 inline-block px-2 py-0.5 rounded-full mt-1\" x-text=\"'Branching from: ' + branchContext\"></p></div><button @click=\"closeDraft()\" class=\"text-slate-400 bg-slate-100 w-8 h-8 rounded-full font-bold\">&times;</button></div><div x-show=\"!sourceMode\"><textarea x-model=\"postText\" rows=\"3\" class=\"w-full bg-slate-50 rounded-2xl px-4 py-4 outline-none text-slate-800 text-base md:text-lg resize-none border border-slate-200 focus:border-indigo-400\"></textarea></div><div x-show=\"sourceMode\" class=\"bg-indigo-50 border border-indigo-100 rounded-xl p-4 md:p-6 min-h-[100px]\"><p class=\"text-[10px] text-indigo-500 uppercase font-black mb-3\">Touch words to attach a source</p><div class=\"text-base md:text-lg font-medium text-slate-800 leading-relaxed\"><template x-for=\"wordObj in interactiveWords\" :key=\"wordObj.id\"><span @click=\"touchWord(wordObj)\" x-text=\"wordObj.text\" class=\"word-touch\" :class=\"selectedSources.find(s => s.id === wordObj.id) ? 'word-selected' : ''\"></span></template></div></div><!-- Modern Linked Sources Display in Draft --><div x-show=\"selectedSources.length > 0\" class=\"mt-2 flex flex-wrap gap-2\"><template x-for=\"src in selectedSources\" :key=\"src.id\"><div class=\"flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm text-xs\"><span class=\"font-black text-indigo-600\" x-text=\"src.word\"></span> <button x-show=\"!src.sourceTitle\" @click=\"openSourcePicker(src.id)\" class=\"text-slate-400 hover:text-indigo-600\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\" d=\"M12 4v16m8-8H4\"></path></svg></button> <span x-show=\"src.sourceTitle\" class=\"flex items-center gap-1 font-bold text-slate-700\"><svg class=\"w-3 h-3 text-emerald-500\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\" d=\"M5 13l4 4L19 7\"></path></svg> <span x-text=\"src.sourceTitle\"></span></span></div></template></div><div class=\"flex flex-col md:flex-row justify-between items-center gap-4 mt-2 border-t border-slate-100 pt-3\"><div class=\"flex w-full md:w-auto items-center justify-between gap-4\"><button x-show=\"!sourceMode\" @click=\"enableSourceMode()\" class=\"text-indigo-600 bg-indigo-50 px-3 py-2 rounded-lg font-bold text-xs md:text-sm\">Link Sources</button> <button x-show=\"sourceMode\" @click=\"sourceMode = false\" class=\"text-slate-500 text-xs md:text-sm font-bold underline\">Back</button> <label class=\"flex items-center gap-2 cursor-pointer\"><input type=\"checkbox\" x-model=\"notifyFollowers\" class=\"sr-only\"><div class=\"w-8 h-5 rounded-full transition-colors\" :class=\"notifyFollowers ? 'bg-indigo-500' : 'bg-slate-300'\"><div class=\"bg-white w-3.5 h-3.5 rounded-full mt-0.5 ml-0.5 transition transform\" :class=\"notifyFollowers ? 'translate-x-3.5' : ''\"></div></div><span class=\"text-[10px] md:text-xs font-bold text-slate-500\">Notify</span></label></div><button @click=\"publishPost()\" class=\"w-full md:w-auto bg-slate-900 text-white px-6 py-3 rounded-xl font-black text-sm shadow-lg hover:bg-indigo-600 transition\">Publish</button></div></div></div><!-- CENTER MODAL CONVERTED TO A FULL SLIDE-UP PAGE --><div class=\"fixed inset-0 bg-[#f8fafc] z-[70] flex flex-col h-[100dvh] w-full\" x-show=\"postModalOpen\" x-transition:enter=\"transition-transform ease-out duration-500\" x-transition:enter-start=\"translate-y-full\" x-transition:enter-end=\"translate-y-0\" x-transition:leave=\"transition-transform ease-in duration-400\" x-transition:leave-start=\"translate-y-0\" x-transition:leave-end=\"translate-y-full\" x-cloak><div class=\"bg-white/90 backdrop-blur-xl border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center z-10 shrink-0 shadow-sm\"><div class=\"flex items-center gap-3\"><button @click=\"postModalOpen = false\" class=\"text-slate-500 hover:text-slate-900 bg-slate-100 rounded-full w-10 h-10 flex items-center justify-center font-bold transition\"><svg class=\"w-5 h-5 rtl:rotate-180\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\" d=\"M10 19l-7-7m0 0l7-7m-7 7h18\"></path></svg></button> <span class=\"font-black text-slate-800 text-base md:text-lg hidden sm:block\" x-text=\"rtl ? 'العودة' : 'Back'\"></span></div><h2 class=\"text-lg md:text-xl font-black text-slate-900 tracking-tighter\" x-text=\"rtl ? 'ساحة الأفكار' : 'Truth Chamber'\"></h2></div><div id=\"modal-content\" class=\"flex-grow flex flex-col relative h-full overflow-hidden\"><!-- طبقة المنشورات: تظهر فقط عندما يكون viewMode هو posts --><div id=\"posts-view\" class=\"h-full overflow-y-auto hide-scroll pb-20\" x-show=\"viewMode === 'posts'\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 scale-95\" x-transition:enter-end=\"opacity-100 scale-100\"><!-- HTMX سيضع المنشورات هنا مرة واحدة فقط ولن يتم مسحها --></div><!-- طبقة التعليقات: تظهر فقط عندما نضغط على Enter Echoes --><div id=\"comments-view\" class=\"h-full overflow-y-auto hide-scroll pb-20 bg-white\" x-show=\"viewMode === 'comments'\" x-transition:enter=\"transition ease-out duration-500 transform\" x-transition:enter-start=\"translate-x-full\" x-transition:enter-end=\"translate-x-0\" x-transition:leave=\"transition ease-in duration-300 transform\" x-transition:leave-start=\"translate-x-0\" x-transition:leave-end=\"translate-x-full\" x-cloak><!-- هنا سيتم شحن التعليقات --></div></div></div><!-- DRAWER (Side Menu) --><div class=\"fixed top-0 h-full w-full sm:w-[400px] bg-white/95 backdrop-blur-2xl z-[80] flex flex-col shadow-2xl\" :class=\"rtl ? 'left-0 border-e' : 'right-0 border-s'\" x-show=\"drawerOpen\" x-transition:enter=\"transition-transform ease-out duration-500\" x-transition:enter-start=\"translate-x-full rtl:-translate-x-full\" x-transition:enter-end=\"translate-x-0 rtl:-translate-x-0\" x-transition:leave=\"transition-transform ease-in duration-400\" x-transition:leave-start=\"translate-x-0 rtl:-translate-x-0\" x-transition:leave-end=\"translate-x-full rtl:-translate-x-full\" x-cloak><div class=\"p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50\"><h2 class=\"text-xl font-black text-slate-800\" x-text=\"rtl ? 'الاستكشاف' : 'Exploration'\"></h2><button @click=\"drawerOpen = false\" class=\"text-3xl text-slate-400 w-10 h-10 flex items-center justify-center\">&times;</button></div><div id=\"drawer-content\" class=\"p-6 overflow-y-auto flex-grow hide-scroll bg-white\"></div></div><!-- OVERLAYS (Share/Saved/Notifications) --><div class=\"fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity\" x-show=\"shareModalOpen\" x-cloak><div class=\"bg-white rounded-t-3xl sm:rounded-[2rem] shadow-2xl w-full max-w-sm p-6 md:p-8 relative\" @click.away=\"shareModalOpen = false\"><button @click=\"shareModalOpen = false\" class=\"absolute top-4 right-4 text-slate-400 text-2xl\">&times;</button><h3 class=\"text-xl md:text-2xl font-black mb-1 text-slate-800\" x-text=\"rtl ? 'شارك أفكارك' : 'Share your mind'\"></h3><p class=\"text-xs md:text-sm text-slate-500 mb-6\" x-text=\"rtl ? 'ادعُ الآخرين للنقاش' : 'Invite others to debate.'\"></p><div class=\"space-y-3\"><button @click=\"copyLink()\" class=\"w-full py-3 md:py-4 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-lg hover:bg-slate-800\">Copy Thinker Link</button> <button @click=\"openWhatsApp()\" class=\"w-full py-3 md:py-4 bg-green-50 text-green-700 rounded-xl font-bold text-sm border border-green-200\">WhatsApp Invite</button></div></div></div><div class=\"fixed inset-0 bg-slate-900/60 z-[100] flex items-end sm:items-center justify-center\" x-show=\"savedPostsOpen\" x-transition.opacity x-cloak><div class=\"bg-white w-full sm:max-w-md h-[80vh] sm:h-[600px] rounded-t-3xl sm:rounded-[2rem] flex flex-col\"><div class=\"p-5 border-b border-slate-100 flex justify-between\"><h3 class=\"font-black text-lg\">Saved Posts</h3><button @click=\"savedPostsOpen = false\" class=\"text-2xl\">&times;</button></div><div id=\"saved-posts-content\" class=\"p-5 overflow-y-auto\"></div></div></div><div class=\"fixed inset-0 bg-slate-900/60 z-[100] flex items-end sm:items-center justify-center\" x-show=\"notificationsOpen\" x-transition.opacity x-cloak><div class=\"bg-white w-full sm:max-w-md h-[80vh] sm:h-[600px] rounded-t-3xl sm:rounded-[2rem] flex flex-col\"><div class=\"p-5 border-b border-slate-100 flex justify-between\"><h3 class=\"font-black text-lg\">Notifications</h3><button @click=\"notificationsOpen = false\" class=\"text-2xl\">&times;</button></div><div id=\"notifications-content\" class=\"p-5 overflow-y-auto\"></div></div></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -138,81 +186,81 @@ func NotificationsList(notifications []Notification) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"flex flex-col gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex flex-col gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(notifications) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"text-center text-slate-400 mt-10 font-bold\">No echoes yet.</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"text-center text-slate-400 mt-10 font-bold\">No echoes yet.</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
 			for _, n := range notifications {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div hx-get=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/api/post_single?id=" + n.PostID)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 364, Col: 51}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" hx-target=\"#modal-content\" @click=\"notificationsOpen = false; postModalOpen = true\" class=\"p-4 rounded-xl bg-white border border-indigo-100 hover:border-indigo-400 cursor-pointer flex items-start gap-3 shadow-sm\"><div class=\"w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500 shrink-0\"><svg class=\"w-4 h-4\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"6\"></circle></svg></div><div><h3 class=\"text-sm font-black text-slate-800\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(n.Title)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 369, Col: 61}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</h3><p class=\"text-[11px] text-slate-500 font-medium mb-1 line-clamp-2\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(n.Message)
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("/api/post_single?id=" + n.PostID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 370, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 467, Col: 51}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</p><span class=\"text-[9px] font-bold text-slate-400 uppercase\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-target=\"#modal-content\" @click=\"notificationsOpen = false; postModalOpen = true\" class=\"p-4 rounded-xl bg-white border border-indigo-100 hover:border-indigo-400 cursor-pointer flex items-start gap-3 shadow-sm\"><div class=\"w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500 shrink-0\"><svg class=\"w-4 h-4\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"6\"></circle></svg></div><div><h3 class=\"text-sm font-black text-slate-800\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(n.Time)
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(n.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 371, Col: 74}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 472, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</span></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</h3><p class=\"text-[11px] text-slate-500 font-medium mb-1 line-clamp-2\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(n.Message)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 473, Col: 85}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</p><span class=\"text-[9px] font-bold text-slate-400 uppercase\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(n.Time)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 474, Col: 74}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</span></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -236,71 +284,71 @@ func TopicsList(word string, topics []Topic) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"mb-4 text-xs text-indigo-500 font-bold uppercase tracking-widest px-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div class=\"mb-4 text-xs text-indigo-500 font-bold uppercase tracking-widest px-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(word)
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(word)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 380, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 483, Col: 90}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(topics) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"p-6 text-center bg-indigo-50/50 rounded-[2rem] border border-indigo-100 shadow-sm\"><!-- الأيقونة --><div class=\"w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm\"><svg class=\"w-6 h-6 text-indigo-400\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 4v16m8-8H4\"></path></svg></div><!-- العنوان --><h3 class=\"font-black text-slate-800 mb-2 text-lg\" x-text=\"rtl ? 'الفراغ خالٍ تماماً' : 'The Void is Empty'\"></h3><!-- الوصف --><p class=\"text-xs text-slate-500 mb-5 leading-relaxed px-2 font-medium\" x-text=\"rtl ? 'كن أول من ينقش موضوعاً في هذا المفهوم وابدأ مساراً فكرياً جديداً.' : 'Be the first to carve a topic into this concept and start a new intellectual path.'\"></p><!-- حقل الإدخال (Placeholder ديناميكي) --><input type=\"text\" :placeholder=\"rtl ? 'اكتب عنوان الموضوع هنا...' : 'Title your topic here...'\" class=\"w-full p-3.5 rounded-xl border border-slate-200 mb-3 text-sm outline-none focus:border-indigo-400 bg-white/60 focus:ring-4 focus:ring-indigo-100 transition-all\"><!-- زر الإرسال --><button class=\"w-full py-3.5 bg-indigo-600 text-white rounded-xl text-xs font-black shadow-md hover:bg-indigo-700 hover:scale-[1.02] transition-all active:scale-95\"><span x-text=\"rtl ? 'تأسيس المسار' : 'Establish Path'\"></span></button></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"p-6 text-center bg-indigo-50/50 rounded-[2rem] border border-indigo-100 shadow-sm\"><!-- الأيقونة --><div class=\"w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm\"><svg class=\"w-6 h-6 text-indigo-400\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 4v16m8-8H4\"></path></svg></div><!-- العنوان --><h3 class=\"font-black text-slate-800 mb-2 text-lg\" x-text=\"rtl ? 'الفراغ خالٍ تماماً' : 'The Void is Empty'\"></h3><!-- الوصف --><p class=\"text-xs text-slate-500 mb-5 leading-relaxed px-2 font-medium\" x-text=\"rtl ? 'كن أول من ينقش موضوعاً في هذا المفهوم وابدأ مساراً فكرياً جديداً.' : 'Be the first to carve a topic into this concept and start a new intellectual path.'\"></p><!-- حقل الإدخال (Placeholder ديناميكي) --><input type=\"text\" :placeholder=\"rtl ? 'اكتب عنوان الموضوع هنا...' : 'Title your topic here...'\" class=\"w-full p-3.5 rounded-xl border border-slate-200 mb-3 text-sm outline-none focus:border-indigo-400 bg-white/60 focus:ring-4 focus:ring-indigo-100 transition-all\"><!-- زر الإرسال --><button class=\"w-full py-3.5 bg-indigo-600 text-white rounded-xl text-xs font-black shadow-md hover:bg-indigo-700 hover:scale-[1.02] transition-all active:scale-95\"><span x-text=\"rtl ? 'تأسيس المسار' : 'Establish Path'\"></span></button></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div class=\"flex flex-col gap-3\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"flex flex-col gap-3\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, t := range topics {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div hx-get=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs("/api/posts?id=" + t.ID)
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs("/api/posts?id=" + t.ID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 411, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 514, Col: 41}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" hx-target=\"#posts-view\" @click=\"drawerOpen = false; postModalOpen = true; viewMode = 'posts'\" class=\"p-4 md:p-5 rounded-2xl bg-white border border-slate-100 cursor-pointer\"><h3 class=\"text-base md:text-lg font-black text-slate-800\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(t.Title)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 416, Col: 73}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" hx-target=\"#posts-view\" @click=\"drawerOpen = false; postModalOpen = true; viewMode = 'posts'\" class=\"p-4 md:p-5 rounded-2xl bg-white border border-slate-100 cursor-pointer\"><h3 class=\"text-base md:text-lg font-black text-slate-800\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</h3><p class=\"text-[10px] md:text-xs text-slate-400 mt-2 font-bold uppercase tracking-wider\">Uncover &rarr;</p></div>")
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(t.Title)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 519, Col: 73}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</h3><p class=\"text-[10px] md:text-xs text-slate-400 mt-2 font-bold uppercase tracking-wider\">Uncover &rarr;</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -325,174 +373,174 @@ func PostsList(posts []Post) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<div class=\"p-4 md:p-10 max-w-4xl mx-auto pt-6 md:pt-10\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div class=\"p-4 md:p-10 max-w-4xl mx-auto pt-6 md:pt-10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(posts) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"mt-10 md:mt-20 flex flex-col items-center text-center\"><div class=\"w-16 h-16 md:w-20 md:h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6\"><svg class=\"w-8 h-8 text-slate-400\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 4v16m8-8H4\"></path></svg></div><h2 class=\"text-2xl md:text-3xl font-black text-slate-900 mb-2\">The Origin Point</h2><p class=\"text-sm text-slate-500 mb-8 max-w-sm\">No minds have traversed this exact path. Plant the first seed of truth.</p><textarea rows=\"3\" placeholder=\"Establish the origin...\" class=\"w-full bg-white resize-none outline-none p-5 rounded-2xl shadow-sm border border-slate-200 text-slate-800 text-base mb-4 focus:border-indigo-400\"></textarea> <button class=\"bg-slate-900 text-white w-full py-3.5 rounded-xl font-black text-sm shadow-md hover:bg-slate-800\">Publish Origin</button></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"mt-10 md:mt-20 flex flex-col items-center text-center\"><div class=\"w-16 h-16 md:w-20 md:h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6\"><svg class=\"w-8 h-8 text-slate-400\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 4v16m8-8H4\"></path></svg></div><h2 class=\"text-2xl md:text-3xl font-black text-slate-900 mb-2\">The Origin Point</h2><p class=\"text-sm text-slate-500 mb-8 max-w-sm\">No minds have traversed this exact path. Plant the first seed of truth.</p><textarea rows=\"3\" placeholder=\"Establish the origin...\" class=\"w-full bg-white resize-none outline-none p-5 rounded-2xl shadow-sm border border-slate-200 text-slate-800 text-base mb-4 focus:border-indigo-400\"></textarea> <button class=\"bg-slate-900 text-white w-full py-3.5 rounded-xl font-black text-sm shadow-md hover:bg-slate-800\">Publish Origin</button></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"space-y-6\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"space-y-6\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, p := range posts {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div class=\"p-6 md:p-8 border border-slate-200 rounded-[2rem] bg-white shadow-sm\"><!-- NEW: Audience Context Summary at the top of the post --><div class=\"mb-6 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative\" x-data=\"{ showInfo: false }\"><div class=\"flex gap-6\"><div><span class=\"block text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1\" x-text=\"rtl ? 'المشاهدات' : 'Views'\"></span><div class=\"font-black text-slate-800\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var16 string
-				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p.Views))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 442, Col: 217}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div></div><div><span class=\"block text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1\" x-text=\"rtl ? 'التجاوب' : 'Resonances'\"></span><div class=\"font-black text-slate-800\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var17 string
-				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p.Resonances))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 443, Col: 223}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div></div></div><div class=\"flex items-center gap-3\"><div><span class=\"block text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 text-end\" x-text=\"rtl ? 'الجمهور' : 'Audience'\"></span><div class=\"font-bold text-xs text-slate-700 bg-white px-2 py-1 rounded border border-slate-200\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div class=\"p-6 md:p-8 border border-slate-200 rounded-[2rem] bg-white shadow-sm\"><!-- NEW: Audience Context Summary at the top of the post --><div class=\"mb-6 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative\" x-data=\"{ showInfo: false }\"><div class=\"flex gap-6\"><div><span class=\"block text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1\" x-text=\"rtl ? 'المشاهدات' : 'Views'\"></span><div class=\"font-black text-slate-800\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(p.Audience.Origins)
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p.Views))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 448, Col: 126}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 545, Col: 217}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div></div><button @click=\"showInfo = !showInfo\" class=\"w-6 h-6 shrink-0 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-black text-xs hover:bg-indigo-200 transition\">i</button></div><!-- Info Tooltip --><div x-show=\"showInfo\" @click.away=\"showInfo = false\" x-cloak class=\"absolute top-full mt-2 right-0 bg-slate-900 text-white text-xs p-3 rounded-xl shadow-lg w-48 z-10\"><p x-text=\"rtl ? 'هذه البيانات توضح طبيعة واهتمامات العقول التي استكشفت هذه الفكرة.' : 'This data reflects the origins and interests of the minds exploring this thought.'\"></p></div></div><div class=\"flex justify-between items-start mb-4\"><h3 class=\"text-xl md:text-2xl font-black text-slate-900 leading-tight\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div></div><div><span class=\"block text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1\" x-text=\"rtl ? 'التجاوب' : 'Resonances'\"></span><div class=\"font-black text-slate-800\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var19 string
-				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p.Resonances))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 460, Col: 88}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 546, Col: 223}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</h3><button @click=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</div></div></div><div class=\"flex items-center gap-3\"><div><span class=\"block text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 text-end\" x-text=\"rtl ? 'الجمهور' : 'Audience'\"></span><div class=\"font-bold text-xs text-slate-700 bg-white px-2 py-1 rounded border border-slate-200\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var20 string
-				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs("branchThought('" + p.Title + "')")
+				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(p.Audience.Origins)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 461, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 551, Col: 126}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" class=\"text-[10px] md:text-xs font-black text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-100 transition whitespace-nowrap\"><span x-text=\"rtl ? 'تفرع الفكرة ⎇' : 'Branch Thought ⎇'\"></span></button></div><p class=\"text-slate-600 mb-6 text-sm md:text-base leading-relaxed font-medium\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div></div><button @click=\"showInfo = !showInfo\" class=\"w-6 h-6 shrink-0 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-black text-xs hover:bg-indigo-200 transition\">i</button></div><!-- Info Tooltip --><div x-show=\"showInfo\" @click.away=\"showInfo = false\" x-cloak class=\"absolute top-full mt-2 right-0 bg-slate-900 text-white text-xs p-3 rounded-xl shadow-lg w-48 z-10\"><p x-text=\"rtl ? 'هذه البيانات توضح طبيعة واهتمامات العقول التي استكشفت هذه الفكرة.' : 'This data reflects the origins and interests of the minds exploring this thought.'\"></p></div></div><div class=\"flex justify-between items-start mb-4\"><h3 class=\"text-xl md:text-2xl font-black text-slate-900 leading-tight\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var21 string
-				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(p.Body)
+				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 466, Col: 94}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 563, Col: 88}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</p><!-- Modern Friendly Linked Sources -->")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</h3><button @click=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var22 string
+				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs("branchThought('" + p.Title + "')")
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 564, Col: 58}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"text-[10px] md:text-xs font-black text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-100 transition whitespace-nowrap\"><span x-text=\"rtl ? 'تفرع الفكرة ⎇' : 'Branch Thought ⎇'\"></span></button></div><p class=\"text-slate-600 mb-6 text-sm md:text-base leading-relaxed font-medium\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var23 string
+				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(p.Body)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 569, Col: 94}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</p><!-- Modern Friendly Linked Sources -->")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if len(p.Sources) > 0 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<div class=\"mb-6 flex flex-wrap gap-2\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<div class=\"mb-6 flex flex-wrap gap-2\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					for _, src := range p.Sources {
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<div class=\"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50/80 border border-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition cursor-pointer shadow-sm\"><svg class=\"w-3.5 h-3.5 text-indigo-400\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.5\" d=\"M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1\"></path></svg> <span>")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div class=\"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50/80 border border-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition cursor-pointer shadow-sm\"><svg class=\"w-3.5 h-3.5 text-indigo-400\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.5\" d=\"M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1\"></path></svg> <span>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						var templ_7745c5c3_Var22 string
-						templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(src.Word)
+						var templ_7745c5c3_Var24 string
+						templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(src.Word)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 474, Col: 26}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 577, Col: 26}
 						}
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, ": <span class=\"font-medium text-slate-600\">")
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						var templ_7745c5c3_Var23 string
-						templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(src.Title)
-						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 474, Col: 82}
-						}
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, ": <span class=\"font-medium text-slate-600\">")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</span></span></div>")
+						var templ_7745c5c3_Var25 string
+						templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(src.Title)
+						if templ_7745c5c3_Err != nil {
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 577, Col: 82}
+						}
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</span></span></div>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<button hx-get=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<button hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var24 string
-				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs("/api/comments?post=" + p.ID + "&page=1")
+				var templ_7745c5c3_Var26 string
+				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs("/api/comments?post=" + p.ID + "&page=1")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 480, Col: 63}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 583, Col: 63}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" hx-target=\"#comments-view\" @click=\"viewMode = 'comments'\" class=\"text-xs md:text-sm font-black text-white bg-slate-900 px-6 py-3 rounded-full hover:bg-indigo-600 transition\"><span x-text=\"rtl ? 'أصداء الأفكار' : 'Enter Echoes'\"></span></button></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "\" hx-target=\"#comments-view\" @click=\"viewMode = 'comments'\" class=\"text-xs md:text-sm font-black text-white bg-slate-900 px-6 py-3 rounded-full hover:bg-indigo-600 transition\"><span x-text=\"rtl ? 'أصداء الأفكار' : 'Enter Echoes'\"></span></button></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -516,52 +564,52 @@ func CommentsSection(comments []Comment, page int, hasMore bool, userPoints int)
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var25 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var25 == nil {
-			templ_7745c5c3_Var25 = templ.NopComponent
+		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var27 == nil {
+			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		if page == 1 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"p-4 md:p-10 max-w-2xl mx-auto\"><!-- لاحظ حذف hx-get .. العودة أصبحت فورية بدون إنترنت --><button @click=\"viewMode = 'posts'\" class=\"text-xs font-bold text-slate-400 mb-6 flex items-center gap-1 hover:text-slate-800 transition\"><svg class=\"w-3 h-3 rtl:rotate-180\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\" d=\"M10 19l-7-7m0 0l7-7m-7 7h18\"></path></svg> <span x-text=\"rtl ? 'العودة للحقائق' : 'Back to Truths'\"></span></button><h2 class=\"text-2xl font-black text-slate-800 mb-6\" x-text=\"rtl ? 'صدى الأفكار' : 'Echoes of Minds'\"></h2><div class=\"mb-8 bg-white p-2 rounded-2xl shadow-sm border border-slate-200\" x-data=\"{ attemptMsg: false }\"><div class=\"relative\"><textarea rows=\"2\" placeholder=\"Forge a new perspective...\" class=\"w-full resize-none outline-none p-4 text-slate-800 text-sm disabled:opacity-30\" :disabled=\"attemptMsg\" @click=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var26 string
-			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs("if(" + strconv.Itoa(userPoints) + " < 1000) { attemptMsg = true; setTimeout(() => attemptMsg = false, 3000); $event.preventDefault(); $el.blur(); }")
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 506, Col: 333}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\"></textarea><div x-show=\"attemptMsg\" x-transition.opacity.duration.300ms class=\"absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-red-100 z-10 p-2 text-center\"><p class=\"text-red-600 font-black text-[10px] md:text-xs bg-red-50 px-4 py-2 rounded-lg border border-red-200\">1000 points required. Resonate below.</p></div></div><div class=\"flex justify-between items-center px-4 pb-2\"><span class=\"text-[10px] text-slate-400 font-black tracking-widest\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var27 string
-			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(userPoints))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 512, Col: 99}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, " PTS</span> <button class=\"bg-slate-900 text-white px-5 py-2 rounded-lg font-black text-xs\" @click=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"p-4 md:p-10 max-w-2xl mx-auto\"><!-- لاحظ حذف hx-get .. العودة أصبحت فورية بدون إنترنت --><button @click=\"viewMode = 'posts'\" class=\"text-xs font-bold text-slate-400 mb-6 flex items-center gap-1 hover:text-slate-800 transition\"><svg class=\"w-3 h-3 rtl:rotate-180\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\" d=\"M10 19l-7-7m0 0l7-7m-7 7h18\"></path></svg> <span x-text=\"rtl ? 'العودة للحقائق' : 'Back to Truths'\"></span></button><h2 class=\"text-2xl font-black text-slate-800 mb-6\" x-text=\"rtl ? 'صدى الأفكار' : 'Echoes of Minds'\"></h2><div class=\"mb-8 bg-white p-2 rounded-2xl shadow-sm border border-slate-200\" x-data=\"{ attemptMsg: false }\"><div class=\"relative\"><textarea rows=\"2\" placeholder=\"Forge a new perspective...\" class=\"w-full resize-none outline-none p-4 text-slate-800 text-sm disabled:opacity-30\" :disabled=\"attemptMsg\" @click=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var28 string
-			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs("if(" + strconv.Itoa(userPoints) + " < 1000) { attemptMsg = true; setTimeout(() => attemptMsg = false, 3000); }")
+			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs("if(" + strconv.Itoa(userPoints) + " < 1000) { attemptMsg = true; setTimeout(() => attemptMsg = false, 3000); $event.preventDefault(); $el.blur(); }")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 513, Col: 206}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 609, Col: 333}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "\">Imprint</button></div></div><div class=\"space-y-4\" id=\"comments-list\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "\"></textarea><div x-show=\"attemptMsg\" x-transition.opacity.duration.300ms class=\"absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-red-100 z-10 p-2 text-center\"><p class=\"text-red-600 font-black text-[10px] md:text-xs bg-red-50 px-4 py-2 rounded-lg border border-red-200\">1000 points required. Resonate below.</p></div></div><div class=\"flex justify-between items-center px-4 pb-2\"><span class=\"text-[10px] text-slate-400 font-black tracking-widest\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var29 string
+			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(userPoints))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 615, Col: 99}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, " PTS</span> <button class=\"bg-slate-900 text-white px-5 py-2 rounded-lg font-black text-xs\" @click=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var30 string
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs("if(" + strconv.Itoa(userPoints) + " < 1000) { attemptMsg = true; setTimeout(() => attemptMsg = false, 3000); }")
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 616, Col: 206}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\">Imprint</button></div></div><div class=\"space-y-4\" id=\"comments-list\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -569,7 +617,7 @@ func CommentsSection(comments []Comment, page int, hasMore bool, userPoints int)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -580,20 +628,20 @@ func CommentsSection(comments []Comment, page int, hasMore bool, userPoints int)
 			}
 		}
 		if hasMore {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"mt-6 text-center\"><button hx-get=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<div class=\"mt-6 text-center\"><button hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var29 string
-			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs("/api/comments?post=1&page=" + strconv.Itoa(page+1))
+			var templ_7745c5c3_Var31 string
+			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs("/api/comments?post=1&page=" + strconv.Itoa(page+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 526, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 629, Col: 73}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\" hx-target=\"#comments-list\" hx-swap=\"beforeend\" @click=\"$el.closest('div').style.display='none'\" class=\"text-xs font-black text-slate-600 bg-slate-100 px-6 py-3 rounded-full hover:bg-slate-200\">Unearth deeper echoes...</button></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "\" hx-target=\"#comments-list\" hx-swap=\"beforeend\" @click=\"$el.closest('div').style.display='none'\" class=\"text-xs font-black text-slate-600 bg-slate-100 px-6 py-3 rounded-full hover:bg-slate-200\">Unearth deeper echoes...</button></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -618,127 +666,127 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var30 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var30 == nil {
-			templ_7745c5c3_Var30 = templ.NopComponent
+		templ_7745c5c3_Var32 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var32 == nil {
+			templ_7745c5c3_Var32 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		for _, c := range comments {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div class=\"p-5 md:p-6 rounded-2xl bg-white flex flex-col gap-4 transition-all duration-300\" :class=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var31 string
-			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? 'border-2 border-indigo-500 shadow-md scale-[1.01]' : 'border border-slate-100 shadow-sm'")
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 536, Col: 143}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "\"><div class=\"flex justify-between items-center\"><div class=\"flex items-center gap-3\"><div class=\"w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-black text-xs\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var32 string
-			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(string(c.Author[0]))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 539, Col: 140}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</div><span class=\"font-black text-sm text-slate-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<div class=\"p-5 md:p-6 rounded-2xl bg-white flex flex-col gap-4 transition-all duration-300\" :class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var33 string
-			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(c.Author)
+			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? 'border-2 border-indigo-500 shadow-md scale-[1.01]' : 'border border-slate-100 shadow-sm'")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 540, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 639, Col: 143}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</span></div><span class=\"text-[10px] font-black bg-slate-50 border border-slate-100 px-2 py-1 rounded text-slate-500\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "\"><div class=\"flex justify-between items-center\"><div class=\"flex items-center gap-3\"><div class=\"w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-black text-xs\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var34 string
-			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(c.Points))
+			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(string(c.Author[0]))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 542, Col: 134}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 642, Col: 140}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, " PTS</span></div><p class=\"text-slate-600 text-sm leading-relaxed md:ps-11\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</div><span class=\"font-black text-sm text-slate-900\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var35 string
-			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(c.Text)
+			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(c.Author)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 544, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 643, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</span></div><span class=\"text-[10px] font-black bg-slate-50 border border-slate-100 px-2 py-1 rounded text-slate-500\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var36 string
+			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(c.Points))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 645, Col: 134}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, " PTS</span></div><p class=\"text-slate-600 text-sm leading-relaxed md:ps-11\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var37 string
+			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(c.Text)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 647, Col: 70}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if userPoints < 1000 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<div class=\"md:ps-11 mt-1\"><button @click=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var36 string
-				templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance = '" + c.ID + "'")
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 547, Col: 58}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "\" class=\"text-[11px] md:text-xs font-black px-6 py-3 md:py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 border w-full md:w-auto\" :class=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var37 string
-				templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'text-slate-600 border-slate-200 hover:bg-indigo-50 hover:border-indigo-300'")
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 549, Col: 190}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "\"><span x-text=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "<div class=\"md:ps-11 mt-1\"><button @click=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var38 string
-				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? (rtl ? 'حقيقتك المفضلة' : 'Your Truth') : (rtl ? 'تجاوب' : 'Resonate')")
+				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance = '" + c.ID + "'")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 550, Col: 150}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 650, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "\"></span></button></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\" class=\"text-[11px] md:text-xs font-black px-6 py-3 md:py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 border w-full md:w-auto\" :class=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var39 string
+				templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'text-slate-600 border-slate-200 hover:bg-indigo-50 hover:border-indigo-300'")
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 652, Col: 190}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "\"><span x-text=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var40 string
+				templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? (rtl ? 'حقيقتك المفضلة' : 'Your Truth') : (rtl ? 'تجاوب' : 'Resonate')")
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 653, Col: 150}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "\"></span></button></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -763,68 +811,68 @@ func SavedPostsList(posts []Post) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var39 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var39 == nil {
-			templ_7745c5c3_Var39 = templ.NopComponent
+		templ_7745c5c3_Var41 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var41 == nil {
+			templ_7745c5c3_Var41 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<div class=\"flex flex-col gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "<div class=\"flex flex-col gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(posts) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<div class=\"text-center text-slate-400 mt-10 font-bold\">No saved items found.</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<div class=\"text-center text-slate-400 mt-10 font-bold\">No saved items found.</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
 			for _, p := range posts {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<div @click=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var40 string
-				templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs("assignSource('" + p.Title + "')")
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 564, Col: 51}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "\" class=\"p-4 rounded-xl bg-white border border-slate-100 hover:border-indigo-400 cursor-pointer shadow-sm group\"><h3 class=\"text-sm font-black text-slate-800 mb-1\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var41 string
-				templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 565, Col: 65}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</h3><p class=\"text-[11px] text-slate-500 font-medium line-clamp-2\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "<div @click=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var42 string
-				templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(p.Body)
+				templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs("assignSource('" + p.Title + "')")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 566, Col: 76}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 667, Col: 51}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "\" class=\"p-4 rounded-xl bg-white border border-slate-100 hover:border-indigo-400 cursor-pointer shadow-sm group\"><h3 class=\"text-sm font-black text-slate-800 mb-1\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var43 string
+				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 668, Col: 65}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "</h3><p class=\"text-[11px] text-slate-500 font-medium line-clamp-2\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var44 string
+				templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(p.Body)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 669, Col: 76}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

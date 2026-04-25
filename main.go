@@ -49,6 +49,9 @@ type CloudWord struct {
 	Text   string
 	IsLive bool
 	Size   int
+
+	XOffset string // إزاحة أفقية عشوائية
+	YOffset string // إزاحة رأسية عشوائية
 }
 
 type Notification struct {
@@ -96,15 +99,29 @@ func getWords() []CloudWord {
 		"الكون",
 		"الفكر",
 		"الهوية",
+		"الذكاء",
+		"الكون",
+		"الفكر",
+		"الهوية",
+		"الكون",
+		"الفكر",
+		"الهوية",
 	}
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(baseWords), func(i, j int) { baseWords[i], baseWords[j] = baseWords[j], baseWords[i] })
 
 	var cloud []CloudWord
-	for i, w := range baseWords {
-		size := 3
-		if i%4 == 0 { size = 1 } else if i%2 == 0 { size = 2 }
-		cloud = append(cloud, CloudWord{Text: w, IsLive: rand.Float32() < 0.15, Size: size})
+	xOffsets := []string{"-mt-4", "mt-8", "-mt-8", "mt-4", "mt-2", "-mt-6"}
+	yOffsets := []string{"-ml-2", "ml-4", "-ml-6", "ml-8", "ml-2", "-ml-4"}
+
+	for _, w := range baseWords {
+		cloud = append(cloud, CloudWord{
+			Text:   w,
+			IsLive: rand.Float32() < 0.15,
+			Size:   rand.Intn(3) + 1,
+			XOffset: xOffsets[rand.Intn(len(xOffsets))],
+			YOffset: yOffsets[rand.Intn(len(yOffsets))],
+		})
 	}
 	return cloud
 }
