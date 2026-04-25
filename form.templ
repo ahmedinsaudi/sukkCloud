@@ -180,11 +180,13 @@ templ HomePage(words []CloudWord) {
 					<!-- إدراج "الصك" في الترتيب الثامن ليكون قلب المجرة -->
 					if i == 8 {
 						<div class="w-full max-w-sm mx-auto my-8 relative group cursor-default z-20">
-							<!-- توهج خلفي (Aura) -->
-							<div class="absolute -inset-4 bg-indigo-500/15 blur-3xl rounded-[3rem] group-hover:bg-indigo-500/25 transition duration-700"></div>
+							<!-- توهج خلفي (Aura) 
 							
+							<div class="absolute -inset-4 bg-indigo-500/15 blur-3xl rounded-[3rem] group-hover:bg-indigo-500/25 transition duration-700"></div>
+							-->
+
 							<!-- بطاقة الصك (The Sukk Card) -->
-							<div class="relative bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-700/50 rounded-[2.5rem] p-6 flex flex-col justify-between shadow-2xl overflow-hidden"
+							<div class="relative bg-gradient-to-b from-slate-200 to-slate-950 border border-slate-700/50 rounded-[2.5rem] p-6 flex flex-col justify-between shadow-2xl overflow-hidden"
 								style="min-height: 320px; max-height: 40vh;">
 								
 								<!-- علامة مائية خلفية -->
@@ -231,22 +233,22 @@ templ HomePage(words []CloudWord) {
 
 								<!-- الحالة الفكرية (مضغوطة) -->
 								<div class="text-center my-2 relative z-10">
-								<p class="text-[9px] text-slate-400 mb-0.5"
+								<p class="text-[11px] text-slate-400 mb-0.5"
 									x-text="rtl ? 'الحالة' : 'State'"></p>
 								<h2 class="text-sm font-bold text-white tracking-wide"
 									x-text="rtl ? 'التعمق الفلسفي' : 'Philosophical Depth'"></h2>
 								</div>				
 
 								<!-- الإحصائيات -->
-								<div class="flex justify-between text-[10px] md:text-xs text-slate-300 border-y border-white/10 py-3 mb-4 px-2 relative z-10">
-									<div class="flex flex-col items-center"><span class="font-black text-white">42</span><span class="opacity-50 text-[8px] uppercase tracking-tighter" x-text="rtl ? 'كلمة' : 'Words'"></span></div>
-									<div class="flex flex-col items-center"><span class="font-black text-white">128</span><span class="opacity-50 text-[8px] uppercase tracking-tighter" x-text="rtl ? 'أثر' : 'Impact'"></span></div>
-									<div class="flex flex-col items-center"><span class="font-black text-indigo-400">Lv 6</span><span class="opacity-50 text-[8px] uppercase tracking-tighter" x-text="rtl ? 'العمق' : 'Depth'"></span></div>
+								<div class="flex justify-between text-[12px] md:text-xs text-slate-300 border-y border-white/10 py-3 mb-4 px-2 relative z-10">
+									<div class="flex flex-col items-center"><span class="font-black text-white">42</span><span class="opacity-50 text-[10px] uppercase tracking-tighter" x-text="rtl ? 'كلمة' : 'Words'"></span></div>
+									<div class="flex flex-col items-center"><span class="font-black text-white">128</span><span class="opacity-50 text-[10px] uppercase tracking-tighter" x-text="rtl ? 'أثر' : 'Impact'"></span></div>
+									<div class="flex flex-col items-center"><span class="font-black text-indigo-400">Lv 6</span><span class="opacity-50 text-[10px] uppercase tracking-tighter" x-text="rtl ? 'العمق' : 'Depth'"></span></div>
 								</div>
 
 								<!-- الترقية القادمة -->
 								<div class="text-center relative z-10">
-									<p class="text-[9px] text-slate-500 uppercase tracking-widest mb-2" x-text="rtl ? 'مسار التطور القادم' : 'Next Path'"></p>
+									<p class="text-[12px] text-slate-500 uppercase tracking-widest mb-2" x-text="rtl ? 'مسار التطور القادم' : 'Next Path'"></p>
 									<div class="flex justify-center gap-2">
 										<button hx-get="/api/topics?word=Logic" hx-target="#drawer-content" @click="showLoader('drawer-content'); drawerOpen = true" class="text-[10px] px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-indigo-600 rounded-full text-white font-bold transition-all active:scale-95">Logic</button>
 										<button hx-get="/api/topics?word=Ethics" hx-target="#drawer-content" @click="showLoader('drawer-content'); drawerOpen = true" class="text-[10px] px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-indigo-600 rounded-full text-white font-bold transition-all active:scale-95">Ethics</button>

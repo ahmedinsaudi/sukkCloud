@@ -41,7 +41,7 @@ func HomePage(words []CloudWord) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if i == 8 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-sm mx-auto my-8 relative group cursor-default z-20\"><!-- توهج خلفي (Aura) --><div class=\"absolute -inset-4 bg-indigo-500/15 blur-3xl rounded-[3rem] group-hover:bg-indigo-500/25 transition duration-700\"></div><!-- بطاقة الصك (The Sukk Card) --><div class=\"relative bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-700/50 rounded-[2.5rem] p-6 flex flex-col justify-between shadow-2xl overflow-hidden\" style=\"min-height: 320px; max-height: 40vh;\"><!-- علامة مائية خلفية --><div class=\"absolute -right-10 -top-10 text-white/5 transform rotate-12 pointer-events-none\"><svg class=\"w-40 h-40\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"></path></svg></div><!-- رأس الصك --><div class=\"flex items-center justify-between py-2 relative z-10\"><!-- Left: Identity --><div class=\"flex items-center gap-2\"><!-- Icon بدل العنوان الكبير --><div class=\"w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20\"><svg class=\"w-4 h-4 text-indigo-400\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path d=\"M9 12h6M9 16h6M7 4h10l2 2v14H5V4h2z\"></path></svg></div><!-- Text --><div class=\"leading-tight\"><p class=\"text-[10px] font-bold text-indigo-400 tracking-wide\" x-text=\"rtl ? 'صك معرفي' : 'Sukk'\"></p><p class=\"text-[9px] text-slate-500\" x-text=\"rtl ? 'نشط الآن' : 'Active'\"></p></div></div><!-- Right: Account --><div class=\"flex items-center gap-2\"><div class=\"text-right leading-tight\"><p class=\"text-[10px] text-white font-semibold\">Ahmed</p></div><img src=\"https://i.pravatar.cc/40\" class=\"w-7 h-7 rounded-full border border-slate-600\"></div></div><!-- الحالة الفكرية (مضغوطة) --><div class=\"text-center my-2 relative z-10\"><p class=\"text-[9px] text-slate-400 mb-0.5\" x-text=\"rtl ? 'الحالة' : 'State'\"></p><h2 class=\"text-sm font-bold text-white tracking-wide\" x-text=\"rtl ? 'التعمق الفلسفي' : 'Philosophical Depth'\"></h2></div><!-- الإحصائيات --><div class=\"flex justify-between text-[10px] md:text-xs text-slate-300 border-y border-white/10 py-3 mb-4 px-2 relative z-10\"><div class=\"flex flex-col items-center\"><span class=\"font-black text-white\">42</span><span class=\"opacity-50 text-[8px] uppercase tracking-tighter\" x-text=\"rtl ? 'كلمة' : 'Words'\"></span></div><div class=\"flex flex-col items-center\"><span class=\"font-black text-white\">128</span><span class=\"opacity-50 text-[8px] uppercase tracking-tighter\" x-text=\"rtl ? 'أثر' : 'Impact'\"></span></div><div class=\"flex flex-col items-center\"><span class=\"font-black text-indigo-400\">Lv 6</span><span class=\"opacity-50 text-[8px] uppercase tracking-tighter\" x-text=\"rtl ? 'العمق' : 'Depth'\"></span></div></div><!-- الترقية القادمة --><div class=\"text-center relative z-10\"><p class=\"text-[9px] text-slate-500 uppercase tracking-widest mb-2\" x-text=\"rtl ? 'مسار التطور القادم' : 'Next Path'\"></p><div class=\"flex justify-center gap-2\"><button hx-get=\"/api/topics?word=Logic\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"text-[10px] px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-indigo-600 rounded-full text-white font-bold transition-all active:scale-95\">Logic</button> <button hx-get=\"/api/topics?word=Ethics\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"text-[10px] px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-indigo-600 rounded-full text-white font-bold transition-all active:scale-95\">Ethics</button></div></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-sm mx-auto my-8 relative group cursor-default z-20\"><!-- توهج خلفي (Aura) \r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<div class=\"absolute -inset-4 bg-indigo-500/15 blur-3xl rounded-[3rem] group-hover:bg-indigo-500/25 transition duration-700\"></div>\r\n\t\t\t\t\t\t\t--><!-- بطاقة الصك (The Sukk Card) --><div class=\"relative bg-gradient-to-b from-slate-200 to-slate-950 border border-slate-700/50 rounded-[2.5rem] p-6 flex flex-col justify-between shadow-2xl overflow-hidden\" style=\"min-height: 320px; max-height: 40vh;\"><!-- علامة مائية خلفية --><div class=\"absolute -right-10 -top-10 text-white/5 transform rotate-12 pointer-events-none\"><svg class=\"w-40 h-40\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"></path></svg></div><!-- رأس الصك --><div class=\"flex items-center justify-between py-2 relative z-10\"><!-- Left: Identity --><div class=\"flex items-center gap-2\"><!-- Icon بدل العنوان الكبير --><div class=\"w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20\"><svg class=\"w-4 h-4 text-indigo-400\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path d=\"M9 12h6M9 16h6M7 4h10l2 2v14H5V4h2z\"></path></svg></div><!-- Text --><div class=\"leading-tight\"><p class=\"text-[10px] font-bold text-indigo-400 tracking-wide\" x-text=\"rtl ? 'صك معرفي' : 'Sukk'\"></p><p class=\"text-[9px] text-slate-500\" x-text=\"rtl ? 'نشط الآن' : 'Active'\"></p></div></div><!-- Right: Account --><div class=\"flex items-center gap-2\"><div class=\"text-right leading-tight\"><p class=\"text-[10px] text-white font-semibold\">Ahmed</p></div><img src=\"https://i.pravatar.cc/40\" class=\"w-7 h-7 rounded-full border border-slate-600\"></div></div><!-- الحالة الفكرية (مضغوطة) --><div class=\"text-center my-2 relative z-10\"><p class=\"text-[11px] text-slate-400 mb-0.5\" x-text=\"rtl ? 'الحالة' : 'State'\"></p><h2 class=\"text-sm font-bold text-white tracking-wide\" x-text=\"rtl ? 'التعمق الفلسفي' : 'Philosophical Depth'\"></h2></div><!-- الإحصائيات --><div class=\"flex justify-between text-[12px] md:text-xs text-slate-300 border-y border-white/10 py-3 mb-4 px-2 relative z-10\"><div class=\"flex flex-col items-center\"><span class=\"font-black text-white\">42</span><span class=\"opacity-50 text-[10px] uppercase tracking-tighter\" x-text=\"rtl ? 'كلمة' : 'Words'\"></span></div><div class=\"flex flex-col items-center\"><span class=\"font-black text-white\">128</span><span class=\"opacity-50 text-[10px] uppercase tracking-tighter\" x-text=\"rtl ? 'أثر' : 'Impact'\"></span></div><div class=\"flex flex-col items-center\"><span class=\"font-black text-indigo-400\">Lv 6</span><span class=\"opacity-50 text-[10px] uppercase tracking-tighter\" x-text=\"rtl ? 'العمق' : 'Depth'\"></span></div></div><!-- الترقية القادمة --><div class=\"text-center relative z-10\"><p class=\"text-[12px] text-slate-500 uppercase tracking-widest mb-2\" x-text=\"rtl ? 'مسار التطور القادم' : 'Next Path'\"></p><div class=\"flex justify-center gap-2\"><button hx-get=\"/api/topics?word=Logic\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"text-[10px] px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-indigo-600 rounded-full text-white font-bold transition-all active:scale-95\">Logic</button> <button hx-get=\"/api/topics?word=Ethics\" hx-target=\"#drawer-content\" @click=\"showLoader('drawer-content'); drawerOpen = true\" class=\"text-[10px] px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-indigo-600 rounded-full text-white font-bold transition-all active:scale-95\">Ethics</button></div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -114,7 +114,7 @@ func HomePage(words []CloudWord) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/api/topics?word=" + word.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 277, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 279, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -150,7 +150,7 @@ func HomePage(words []CloudWord) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(word.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 302, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 304, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -209,7 +209,7 @@ func NotificationsList(notifications []Notification) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("/api/post_single?id=" + n.PostID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 467, Col: 51}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 469, Col: 51}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -222,7 +222,7 @@ func NotificationsList(notifications []Notification) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(n.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 472, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 474, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -235,7 +235,7 @@ func NotificationsList(notifications []Notification) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(n.Message)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 473, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 475, Col: 85}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -248,7 +248,7 @@ func NotificationsList(notifications []Notification) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(n.Time)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 474, Col: 74}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 476, Col: 74}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -296,7 +296,7 @@ func TopicsList(word string, topics []Topic) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(word)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 483, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 485, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -324,7 +324,7 @@ func TopicsList(word string, topics []Topic) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs("/api/posts?id=" + t.ID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 514, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 516, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -337,7 +337,7 @@ func TopicsList(word string, topics []Topic) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(t.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 519, Col: 73}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 521, Col: 73}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -400,7 +400,7 @@ func PostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p.Views))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 545, Col: 217}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 547, Col: 217}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -413,7 +413,7 @@ func PostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p.Resonances))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 546, Col: 223}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 548, Col: 223}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -426,7 +426,7 @@ func PostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var20 string
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(p.Audience.Origins)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 551, Col: 126}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 553, Col: 126}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
@@ -439,7 +439,7 @@ func PostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 563, Col: 88}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 565, Col: 88}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -452,7 +452,7 @@ func PostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var22 string
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs("branchThought('" + p.Title + "')")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 564, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 566, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -465,7 +465,7 @@ func PostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var23 string
 				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(p.Body)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 569, Col: 94}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 571, Col: 94}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {
@@ -488,7 +488,7 @@ func PostsList(posts []Post) templ.Component {
 						var templ_7745c5c3_Var24 string
 						templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(src.Word)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 577, Col: 26}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 579, Col: 26}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 						if templ_7745c5c3_Err != nil {
@@ -501,7 +501,7 @@ func PostsList(posts []Post) templ.Component {
 						var templ_7745c5c3_Var25 string
 						templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(src.Title)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 577, Col: 82}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 579, Col: 82}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 						if templ_7745c5c3_Err != nil {
@@ -524,7 +524,7 @@ func PostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var26 string
 				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs("/api/comments?post=" + p.ID + "&page=1")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 583, Col: 63}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 585, Col: 63}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
@@ -577,7 +577,7 @@ func CommentsSection(comments []Comment, page int, hasMore bool, userPoints int)
 			var templ_7745c5c3_Var28 string
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs("if(" + strconv.Itoa(userPoints) + " < 1000) { attemptMsg = true; setTimeout(() => attemptMsg = false, 3000); $event.preventDefault(); $el.blur(); }")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 609, Col: 333}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 611, Col: 333}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
@@ -590,7 +590,7 @@ func CommentsSection(comments []Comment, page int, hasMore bool, userPoints int)
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(userPoints))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 615, Col: 99}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 617, Col: 99}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -603,7 +603,7 @@ func CommentsSection(comments []Comment, page int, hasMore bool, userPoints int)
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs("if(" + strconv.Itoa(userPoints) + " < 1000) { attemptMsg = true; setTimeout(() => attemptMsg = false, 3000); }")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 616, Col: 206}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 618, Col: 206}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -635,7 +635,7 @@ func CommentsSection(comments []Comment, page int, hasMore bool, userPoints int)
 			var templ_7745c5c3_Var31 string
 			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs("/api/comments?post=1&page=" + strconv.Itoa(page+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 629, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 631, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
@@ -679,7 +679,7 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? 'border-2 border-indigo-500 shadow-md scale-[1.01]' : 'border border-slate-100 shadow-sm'")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 639, Col: 143}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 641, Col: 143}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
@@ -692,7 +692,7 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(string(c.Author[0]))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 642, Col: 140}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 644, Col: 140}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 			if templ_7745c5c3_Err != nil {
@@ -705,7 +705,7 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 			var templ_7745c5c3_Var35 string
 			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(c.Author)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 643, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 645, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 			if templ_7745c5c3_Err != nil {
@@ -718,7 +718,7 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 			var templ_7745c5c3_Var36 string
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(c.Points))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 645, Col: 134}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 647, Col: 134}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {
@@ -731,7 +731,7 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(c.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 647, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 649, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
@@ -749,7 +749,7 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 				var templ_7745c5c3_Var38 string
 				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance = '" + c.ID + "'")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 650, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 652, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 				if templ_7745c5c3_Err != nil {
@@ -762,7 +762,7 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 				var templ_7745c5c3_Var39 string
 				templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'text-slate-600 border-slate-200 hover:bg-indigo-50 hover:border-indigo-300'")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 652, Col: 190}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 654, Col: 190}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 				if templ_7745c5c3_Err != nil {
@@ -775,7 +775,7 @@ func commentItems(comments []Comment, userPoints int) templ.Component {
 				var templ_7745c5c3_Var40 string
 				templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs("selectedResonance === '" + c.ID + "' ? (rtl ? 'حقيقتك المفضلة' : 'Your Truth') : (rtl ? 'تجاوب' : 'Resonate')")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 653, Col: 150}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 655, Col: 150}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 				if templ_7745c5c3_Err != nil {
@@ -834,7 +834,7 @@ func SavedPostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var42 string
 				templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs("assignSource('" + p.Title + "')")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 667, Col: 51}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 669, Col: 51}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 				if templ_7745c5c3_Err != nil {
@@ -847,7 +847,7 @@ func SavedPostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var43 string
 				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 668, Col: 65}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 670, Col: 65}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 				if templ_7745c5c3_Err != nil {
@@ -860,7 +860,7 @@ func SavedPostsList(posts []Post) templ.Component {
 				var templ_7745c5c3_Var44 string
 				templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(p.Body)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 669, Col: 76}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form.templ`, Line: 671, Col: 76}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 				if templ_7745c5c3_Err != nil {
